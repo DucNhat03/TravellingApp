@@ -1,89 +1,59 @@
 import React from 'react';
-import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, TextInput, ScrollView } from 'react-native';
-import { Icon } from 'react-native-elements';
+import { View, Text, TextInput, Image, StyleSheet, TouchableOpacity } from 'react-native';
 
-const SearchScreen = ({ navigation }) => {
-  const apartments = [
-    {
-      id: '1',
-      title: 'Apartment in Omaha',
-      image: 'https://i.pinimg.com/236x/0a/31/98/0a31985bc97c57837fcc2f46551faec1.jpg', // Thay bằng URL hình thực tế
-      price: '$20/night',
-      rating: 5.0,
-      location: 'Beach',
-    },
-    {
-      id: '2',
-      title: 'Apartment in San Jose',
-      image: 'https://i.pinimg.com/236x/0a/31/98/0a31985bc97c57837fcc2f46551faec1.jpg', // Thay bằng URL hình thực tế
-      price: '$28/night',
-      rating: 5.0,
-      location: 'Beach',
-    },
-    // Thêm các apartment khác nếu cần
-  ];
-
-  const renderApartmentItem = ({ item }) => (
-    <View style={styles.apartmentContainer}>
-      <Image source={{ uri: item.image }} style={styles.apartmentImage} />
-      <View style={styles.apartmentDetails}>
-        <Text style={styles.apartmentTitle}>{item.title}</Text>
-        <Text style={styles.apartmentLocation}>{item.location}</Text>
-        <View style={styles.priceAndRatingContainer}>
-          <Text style={styles.apartmentPrice}>{item.price}</Text>
-          <Text style={styles.apartmentRating}>⭐ {item.rating}</Text>
-        </View>
-      </View>
-    </View>
-  );
-
+const SearchScreen = () => {
   return (
     <View style={styles.container}>
+      {/* Header */}
       <View style={styles.header}>
-        <TextInput 
-          style={styles.searchInput} 
-          placeholder="Where do you want to stay?" 
-        />
-        <View style={styles.tabContainer}>
-          <TouchableOpacity style={styles.tab}>
-            <Text style={styles.tabText}>Beach</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.tab}>
-            <Text style={styles.tabText}>Mountain</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.tab}>
-            <Text style={styles.tabText}>Camping</Text>
-          </TouchableOpacity>
+        <Text style={styles.title}>Where to?</Text>
+        <TouchableOpacity style={styles.closeButton}>
+          <Text style={styles.closeText}>X</Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* Search Box */}
+      <View style={styles.searchBox}>
+        <TextInput placeholder="Search" style={styles.searchInput} />
+      </View>
+
+      {/* Destination Options */}
+      <View style={styles.destinationOptions}>
+        <View style={styles.destinationItem}>
+          <Image source={require('../searchscreen/euro.png')} style={styles.destinationImage} />
+          <Text style={styles.destinationText}>Anywhere</Text>
+        </View>
+        <View style={styles.destinationItem}>
+          <Image source={require('../searchscreen/euro.png')} style={styles.destinationImage} />
+          <Text style={styles.destinationText}>Europe</Text>
+        </View>
+        <View style={styles.destinationItem}>
+          <Image source={require('../searchscreen/euro.png')} style={styles.destinationImage} />
+          <Text style={styles.destinationText}>Asia</Text>
         </View>
       </View>
-      <ScrollView contentContainerStyle={styles.scrollViewContainer}>
-        <FlatList
-          data={apartments}
-          renderItem={renderApartmentItem}
-          keyExtractor={(item) => item.id}
-          style={styles.apartmentList}
-        />
-      </ScrollView>
+
+      {/* Time and Guests */}
+      <View style={styles.optionRow}>
+        <View style={styles.optionItem}>
+          <Text style={styles.optionLabel}>When</Text>
+          <TouchableOpacity onPress={() => {navigation.navigate("DateSelectionScreen")}}>
+            <Text style={styles.optionValue}>Add time</Text>
+          </TouchableOpacity>    
+        </View>
+        <View style={styles.optionItem}>
+          <Text style={styles.optionLabel}>Guests</Text>
+          <Text style={styles.optionValue}>Add guests</Text>
+        </View>
+      </View>
+
+      {/* Footer */}
       <View style={styles.footer}>
-        <TouchableOpacity style={styles.iconButton} onPress={() => navigation.navigate('Home')}>
-          <Icon name="home" type="font-awesome" />
-          <Text style={styles.iconText}>Home</Text>
+        <TouchableOpacity>
+          <Text style={styles.clearText}>Clear all</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.iconButton} onPress={() => navigation.navigate('Favorites')}>
-          <Icon name="heart" type="font-awesome" />
-          <Text style={styles.iconText}>Favorites</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.iconButton} onPress={() => navigation.navigate('Bookings')}>
-          <Icon name="book" type="font-awesome" />
-          <Text style={styles.iconText}>Bookings</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.iconButton} onPress={() => navigation.navigate('Inbox')}>
-          <Icon name="envelope" type="font-awesome" />
-          <Text style={styles.iconText}>Inbox</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.iconButton} onPress={() => navigation.navigate('Profile')}>
-          <Icon name="user" type="font-awesome" />
-          <Text style={styles.iconText}>Profile</Text>
+        <TouchableOpacity style={styles.searchButton}>
+          <Text style={styles.searchButtonText}>Search</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -93,86 +63,98 @@ const SearchScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
-    backgroundColor: '#fff',
-  },
-  header: {
-    marginBottom: 20,
-  },
-  searchInput: {
-    height: 40,
-    borderColor: '#ccc',
-    borderWidth: 1,
-    borderRadius: 10,
-    paddingHorizontal: 10,
-    marginBottom: 10,
-  },
-  tabContainer: {
-    flexDirection: 'row',
+    backgroundColor: '#f9f9f9',
+    padding: 16,
     justifyContent: 'space-between',
   },
-  tab: {
-    padding: 10,
-    borderRadius: 5,
-    backgroundColor: '#f1f1f1',
-  },
-  tabText: {
-    fontSize: 16,
-    color: '#333',
-  },
-  apartmentContainer: {
-    flexDirection: 'column',
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    marginBottom: 15,
-    overflow: 'hidden',
-    elevation: 2,
-  },
-  apartmentImage: {
-    width: '100%',
-    height: 150,
-  },
-  apartmentDetails: {
-    padding: 10,
-  },
-  apartmentTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  apartmentLocation: {
-    fontSize: 12,
-    color: '#888',
-  },
-  priceAndRatingContainer: {
+  header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: 5,
+    marginBottom: 16,
   },
-  apartmentPrice: {
+  title: {
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  closeButton: {
+    padding: 8,
+  },
+  closeText: {
     fontSize: 16,
-    color: '#00C2F3',
+    color: '#777',
   },
-  apartmentRating: {
+  searchBox: {
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    marginBottom: 16,
+  },
+  searchInput: {
+    fontSize: 16,
+  },
+  destinationOptions: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 16,
+  },
+  destinationItem: {
+    alignItems: 'center',
+    width: '30%',
+  },
+  destinationImage: {
+    width: '100%',
+    height: 80,
+    borderRadius: 8,
+    marginBottom: 4,
+  },
+  destinationText: {
     fontSize: 14,
+    color: '#333',
+    fontWeight: '600',
+  },
+  optionRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    paddingVertical: 16,
+    paddingHorizontal: 12,
+    marginBottom: 16,
+  },
+  optionItem: {
+    width: '48%',
+  },
+  optionLabel: {
+    fontSize: 14,
+    color: '#777',
+  },
+  optionValue: {
+    fontSize: 16,
+    color: '#333',
+    fontWeight: '600',
+    marginTop: 4,
   },
   footer: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
-    padding: 10,
-    borderTopWidth: 1,
-    borderColor: '#ccc',
-    backgroundColor: '#fff',
-  },
-  iconButton: {
+    justifyContent: 'space-between',
     alignItems: 'center',
   },
-  iconText: {
-    fontSize: 12,
-    color: '#333',
+  clearText: {
+    fontSize: 16,
+    color: '#777',
   },
-  scrollViewContainer: {
-    flexGrow: 1,
+  searchButton: {
+    backgroundColor: '#00bfff',
+    borderRadius: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+  },
+  searchButtonText: {
+    fontSize: 16,
+    color: '#fff',
+    fontWeight: 'bold',
   },
 });
 
