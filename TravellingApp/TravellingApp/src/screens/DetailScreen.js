@@ -78,7 +78,7 @@ const DetailScreen = () => {
       {/* Description */}
       <View style={styles.descriptionContainer}>
         <Text style={styles.sectionTitle}>Description</Text>
-        <Image source={require('../homescreen/icon/pool.png')} style={styles.descriptionImage} />
+        <Image source={require('../homescreen/ApartmentinOmaha.png')} style={styles.descriptionImage} />
         <Text>Looking for the perfect place to relax and unwind? This stunning Balinese villa is the ultimate tropical getaway...</Text>
         <TouchableOpacity>
           <Text style={styles.viewMore}>View more</Text>

@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, Image, StyleSheet, ScrollView, SafeAreaView, TouchableOpacity } from 'react-native';
 
 const DetailsScreen = () => (
+  <View style={{ height: '100vh', overflow: 'auto' }}>
   <SafeAreaView style={styles.container}>
     <ScrollView contentContainerStyle={styles.scrollContent}>
       {/* Header */}
@@ -74,6 +75,7 @@ const DetailsScreen = () => (
       </View>
     </ScrollView>
   </SafeAreaView>
+  </View>
 );
 
 const styles = StyleSheet.create({

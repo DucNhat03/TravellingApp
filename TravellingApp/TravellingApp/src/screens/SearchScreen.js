@@ -1,49 +1,77 @@
-import React from 'react';
-import { View, Text, TextInput, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import React from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  FlatList
+} from "react-native";
 
-const SearchScreen = () => {
+const SearchScreen = ({ navigation }) => {
+  const destinations = [
+    { id: "1", name: "Anywhere", image: require("../homescreen/ApartmentinOmaha.png") },
+    { id: "2", name: "Europe", image: require("../homescreen/ApartmentinOmaha.png") },
+    { id: "3", name: "Asia", image: require("../homescreen/ApartmentinOmaha.png") },
+  ];
   return (
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.title}>Where to?</Text>
         <TouchableOpacity style={styles.closeButton}>
           <Text style={styles.closeText}>X</Text>
         </TouchableOpacity>
       </View>
 
-      {/* Search Box */}
-      <View style={styles.searchBox}>
-        <TextInput placeholder="Search" style={styles.searchInput} />
+      {/* Title & Search Box */}
+      <View style={styles.navBar}>
+        <Text style={styles.title}>Where to?</Text>
+        <View style={styles.search}>
+          <TouchableOpacity>
+            <Image
+              source={require("../dataicon/search.png")}
+              style={styles.searchIcon}
+            />
+          </TouchableOpacity>
+          <TextInput
+            placeholder="Search"
+            style={styles.inputSeacrch}
+          ></TextInput>
+        </View>
       </View>
 
       {/* Destination Options */}
-      <View style={styles.destinationOptions}>
-        <View style={styles.destinationItem}>
-          <Image source={require('../searchscreen/euro.png')} style={styles.destinationImage} />
-          <Text style={styles.destinationText}>Anywhere</Text>
-        </View>
-        <View style={styles.destinationItem}>
-          <Image source={require('../searchscreen/euro.png')} style={styles.destinationImage} />
-          <Text style={styles.destinationText}>Europe</Text>
-        </View>
-        <View style={styles.destinationItem}>
-          <Image source={require('../searchscreen/euro.png')} style={styles.destinationImage} />
-          <Text style={styles.destinationText}>Asia</Text>
-        </View>
+      <View>
+        {/* Destination Options */}
+        <FlatList
+          data={destinations}
+          keyExtractor={(item) => item.id}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.destinationOptions}
+          renderItem={({ item }) => (
+            <TouchableOpacity style={styles.destinationItem}>
+              <Image source={item.image} style={styles.destinationImage} />
+              <Text style={styles.destinationText}>{item.name}</Text>
+            </TouchableOpacity>
+          )}
+        />
       </View>
 
       {/* Time and Guests */}
       <View style={styles.optionRow}>
         <View style={styles.optionItem}>
           <Text style={styles.optionLabel}>When</Text>
-          <TouchableOpacity onPress={() => {navigation.navigate("DateSelectionScreen")}}>
+          <TouchableOpacity onPress={() => {navigation.navigate('DateSelectionScreen')}}>
             <Text style={styles.optionValue}>Add time</Text>
-          </TouchableOpacity>    
+          </TouchableOpacity>
         </View>
         <View style={styles.optionItem}>
           <Text style={styles.optionLabel}>Guests</Text>
-          <Text style={styles.optionValue}>Add guests</Text>
+          <TouchableOpacity onPress={() => {navigation.navigate('GuestSelectionScreen')}}>
+            <Text style={styles.optionValue}>Add guests</Text>
+          </TouchableOpacity>
         </View>
       </View>
 
@@ -53,6 +81,10 @@ const SearchScreen = () => {
           <Text style={styles.clearText}>Clear all</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.searchButton}>
+          <Image
+            source={require("../dataicon/search.png")}
+            style={styles.searchIconButton}
+          />
           <Text style={styles.searchButtonText}>Search</Text>
         </TouchableOpacity>
       </View>
@@ -63,98 +95,143 @@ const SearchScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f9f9f9',
-    padding: 16,
-    justifyContent: 'space-between',
+    paddingHorizontal: 15,
+    justifyContent: "space-around",
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    alignItems: "center",
     marginBottom: 16,
   },
+  navBar: {
+    width: "100%",
+    height: 80,
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+  },
   title: {
-    fontSize: 20,
-    fontWeight: 'bold',
+    fontSize: 24,
+    fontWeight: "bold",
   },
   closeButton: {
     padding: 8,
   },
   closeText: {
     fontSize: 16,
-    color: '#777',
+    color: "#777",
   },
-  searchBox: {
-    backgroundColor: '#fff',
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    marginBottom: 16,
+  search: {
+    width: "95%",
+    height: 40,
+    backgroundColor: "#fff",
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
   },
-  searchInput: {
-    fontSize: 16,
+  searchIcon: {
+    width: 20,
+    height: 20,
+    resizeMode: "contain",
+    position: "absolute",
+    top: -8,
+    left: 10,
   },
-  destinationOptions: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 16,
+  searchIconButton: {
+    width: 15,
+    height: 15,
+    resizeMode: "contain",
+  },
+  inputSeacrch: {
+    width: "100%",
+    height: 40,
+    borderWidth: 1,
+    borderColor: "#000",
+    borderRadius: 5,
+    paddingLeft: 40,
+    objectFit: true,
   },
   destinationItem: {
-    alignItems: 'center',
-    width: '30%',
+    alignItems: "center",
+    width: "30%",
   },
   destinationImage: {
-    width: '100%',
+    width: "100%",
     height: 80,
     borderRadius: 8,
     marginBottom: 4,
   },
   destinationText: {
     fontSize: 14,
-    color: '#333',
-    fontWeight: '600',
+    color: "#333",
+    fontWeight: "600",
   },
   optionRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    backgroundColor: '#fff',
-    borderRadius: 8,
-    paddingVertical: 16,
-    paddingHorizontal: 12,
-    marginBottom: 16,
+    justifyContent: "space-between",
+    width: "95%",
+    height: 70,
   },
   optionItem: {
-    width: '48%',
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   optionLabel: {
     fontSize: 14,
-    color: '#777',
+    color: "#777",
   },
   optionValue: {
     fontSize: 16,
-    color: '#333',
-    fontWeight: '600',
+    color: "#333",
+    fontWeight: "600",
     marginTop: 4,
   },
   footer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   clearText: {
     fontSize: 16,
-    color: '#777',
+    color: "#777",
   },
   searchButton: {
-    backgroundColor: '#00bfff',
+    backgroundColor: "#00bfff",
     borderRadius: 8,
-    paddingVertical: 12,
-    paddingHorizontal: 24,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-evenly",
+    width: 100,
+    height: 40,
+    paddingVertical: 5,
   },
   searchButtonText: {
     fontSize: 16,
-    color: '#fff',
-    fontWeight: 'bold',
+    color: "#fff",
+    fontWeight: "bold",
+  },
+  destinationOptions: {
+    width: '100%',
+    height: 150,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  destinationItem: {
+    alignItems: "center",
+    width: '100%',
+    height: 150,
+  },
+  destinationImage: {
+    width: 180,
+    height: 120,
+    resizeMode: "contain",
+  },
+  destinationText: {
+    marginTop: 5,
+    fontSize: 14,
+    fontWeight: "bold",
   },
 });
 

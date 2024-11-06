@@ -20,7 +20,7 @@ const Stack = createStackNavigator();
 
 const AppNavigator = () => (
   <NavigationContainer>
-    <Stack.Navigator initialRouteName="Home">
+    <Stack.Navigator initialRouteName="Search">
       <Stack.Screen 
         name="Login" 
         component={LoginScreen} 

@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useState } from "react";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { useNavigation } from "@react-navigation/native"; 
 
 const GuestSelectionScreen = () => {
+  const navigation = useNavigation();
   const [adultsCount, setAdultsCount] = useState(0);
   const [childrenCount, setChildrenCount] = useState(0);
 
@@ -17,45 +19,64 @@ const GuestSelectionScreen = () => {
 
   return (
     <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.locationLabel}>Location</Text>
-        <Text style={styles.locationValue}>Anywhere</Text>
-      </View>
-
-      {/* Dates */}
-      <View style={styles.datesContainer}>
-        <Text style={styles.datesLabel}>Dates</Text>
-        <Text style={styles.datesValue}>23 - 31 May</Text>
-      </View>
-
-      {/* Guest Selection */}
-      <View style={styles.guestContainer}>
-        <Text style={styles.guestTitle}>How many guests?</Text>
-
-        <View style={styles.guestRow}>
-          <Text style={styles.guestLabel}>Adults</Text>
-          <View style={styles.counterContainer}>
-            <TouchableOpacity onPress={decreaseAdults} style={styles.counterButton}>
-              <Text style={styles.counterText}>-</Text>
-            </TouchableOpacity>
-            <Text style={styles.guestCount}>{adultsCount}</Text>
-            <TouchableOpacity onPress={increaseAdults} style={styles.counterButton}>
-              <Text style={styles.counterText}>+</Text>
-            </TouchableOpacity>
-          </View>
+      <View style={styles.containerTop}>
+        <View style={styles.closeContainer}>
+          <TouchableOpacity style={styles.closeButton} onPress={() => navigation.goBack()}>
+            <Text style={styles.closeText}>x</Text>
+          </TouchableOpacity>
+        </View>
+        {/* Header */}
+        <View style={styles.header}>
+          <Text style={styles.locationLabel}>Location</Text>
+          <Text style={styles.locationValue}>Anywhere</Text>
         </View>
 
-        <View style={styles.guestRow}>
-          <Text style={styles.guestLabel}>Children</Text>
-          <View style={styles.counterContainer}>
-            <TouchableOpacity onPress={decreaseChildren} style={styles.counterButton}>
-              <Text style={styles.counterText}>-</Text>
-            </TouchableOpacity>
-            <Text style={styles.guestCount}>{childrenCount}</Text>
-            <TouchableOpacity onPress={increaseChildren} style={styles.counterButton}>
-              <Text style={styles.counterText}>+</Text>
-            </TouchableOpacity>
+        {/* Dates */}
+        <View style={styles.datesContainer}>
+          <Text style={styles.datesLabel}>Dates</Text>
+          <Text style={styles.datesValue}>23 - 31 May</Text>
+        </View>
+
+        {/* Guest Selection */}
+        <View style={styles.guestContainer}>
+          <Text style={styles.guestTitle}>How many guests?</Text>
+
+          <View style={styles.guestRow}>
+            <Text style={styles.guestLabel}>Adults</Text>
+            <View style={styles.counterContainer}>
+              <TouchableOpacity
+                onPress={decreaseAdults}
+                style={styles.counterButton}
+              >
+                <Text style={styles.counterText}>-</Text>
+              </TouchableOpacity>
+              <Text style={styles.guestCount}>{adultsCount}</Text>
+              <TouchableOpacity
+                onPress={increaseAdults}
+                style={styles.counterButton}
+              >
+                <Text style={styles.counterText}>+</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          <View style={styles.guestRow}>
+            <Text style={styles.guestLabel}>Children</Text>
+            <View style={styles.counterContainer}>
+              <TouchableOpacity
+                onPress={decreaseChildren}
+                style={styles.counterButton}
+              >
+                <Text style={styles.counterText}>-</Text>
+              </TouchableOpacity>
+              <Text style={styles.guestCount}>{childrenCount}</Text>
+              <TouchableOpacity
+                onPress={increaseChildren}
+                style={styles.counterButton}
+              >
+                <Text style={styles.counterText}>+</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </View>
@@ -76,98 +97,126 @@ const GuestSelectionScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f9f9f9',
+    backgroundColor: "#f9f9f9",
     padding: 16,
-    justifyContent: 'space-between',
+    justifyContent: "space-between",
+  },
+  containerTop: {
+    flex: 1,
+    justifyContent: 'flex-start',
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    marginTop: 30,
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginBottom: 16,
   },
   locationLabel: {
     fontSize: 16,
-    color: '#777',
+    color: "#777",
+    marginLeft: 10
   },
   locationValue: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
+    marginRight: 10,
   },
   datesContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    marginTop: 10,
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginBottom: 16,
+    marginRight: 10,
+    marginLeft: 10
   },
   datesLabel: {
     fontSize: 16,
-    color: '#777',
+    color: "#777",
   },
   datesValue: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   guestContainer: {
-    backgroundColor: '#fff',
+    marginTop: 30,
+    backgroundColor: "#fff",
     borderRadius: 8,
     padding: 16,
+    justifyContent: 'space-between',
+    height: 250,
+    borderWidth: 1,
+    borderColor: "#777",
   },
   guestTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 16,
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 10,
   },
   guestRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginBottom: 16,
   },
   guestLabel: {
     fontSize: 16,
-    color: '#333',
+    color: "#333",
   },
   counterContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   counterButton: {
     width: 30,
     height: 30,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#f0f0f0',
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#f0f0f0",
     borderRadius: 8,
     marginHorizontal: 8,
   },
   counterText: {
     fontSize: 18,
-    color: '#333',
+    color: "#333",
   },
   guestCount: {
     fontSize: 16,
-    fontWeight: 'bold',
-    color: '#333',
+    fontWeight: "bold",
+    color: "#333",
   },
   footer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginTop: 16,
+    width: "95%",
+    marginLeft: 10,
   },
   clearText: {
     fontSize: 16,
-    color: '#777',
+    color: "#777",
   },
   searchButton: {
-    backgroundColor: '#00bfff',
+    backgroundColor: "#00bfff",
     borderRadius: 8,
     paddingVertical: 10,
     paddingHorizontal: 20,
   },
   searchButtonText: {
     fontSize: 16,
-    color: '#fff',
-    fontWeight: 'bold',
+    color: "#fff",
+    fontWeight: "bold",
+  },
+  closeContainer: {
+    marginTop: 0,
+    alignItems: "flex-end",
+  },
+  closeButton: {
+    padding: 5,
+  },
+  closeText: {
+    fontSize: 22,
+    color: "#777",
   },
 });
 
