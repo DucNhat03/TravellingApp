@@ -90,7 +90,8 @@ const LoginScreen = ({ navigation }) => {
           </Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.authButton}>
+        <TouchableOpacity style={styles.authButton} 
+          onPress={() => {navigation.navigate("Home")}}>
           <Icon name="google" type="font-awesome" color="#DB4437" size={20} />
           <Text style={[styles.authButtonText, { color: '#DB4437' }]}>
             Continue with Google

@@ -1,13 +1,15 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet, ScrollView, SafeAreaView, TouchableOpacity } from 'react-native';
 
-const DetailsScreen = () => (
+const DetailsScreen = ({ navigation }) => (
+
   <View style={{ height: '100vh', overflow: 'auto' }}>
   <SafeAreaView style={styles.container}>
     <ScrollView contentContainerStyle={styles.scrollContent}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity>
+        <TouchableOpacity 
+          onPress={() => {navigation.goBack()}}>
           <Image source={require('../Image/facilities/backicon.png')} style={styles.icon} />
         </TouchableOpacity>
         <Text style={styles.headerText}>Facilities & services</Text>

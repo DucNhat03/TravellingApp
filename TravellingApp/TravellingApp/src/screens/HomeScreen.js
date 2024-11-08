@@ -3,52 +3,160 @@ import { TouchableOpacity } from "react-native";
 import { View, Text, Image, StyleSheet } from "react-native";
 import { ScrollView, TextInput } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-web";
+import { useFocusEffect } from "@react-navigation/native"; 
 
-const HomeScreen = ({ navigation }) => {
+const HomeScreen = ({ route, navigation }) => {
   const [selectedNav, setSelectedNav] = useState(0); // 0: mặc định mục đầu tiên được chọn
   const [filteredProducts, setFilteredProducts] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [favorites, setFavorites] = useState([]);
+  const [selectedFooter, setSelectedFooter] = useState("Search");
 
   const data = [
-    { id: 1, name: "Apartment in Omaha", category: "Beach", price: 28, rating: 5.0, image: require("../Image/homescreen/ApartmentinOmaha.png") },
-    { id: 2, name: "Mountain Cabin", category: "Mountain", price: 35, rating: 4.8, image: require("../Image/homescreen/ApartmentinSanJose.png") },
-    { id: 3, name: "Camping Tent", category: "Camping", price: 15, rating: 4.5, image: require("../Image/homescreen/ApartmentinSanJose.png") },
-    { id: 4, name: "Apartment in Omaha 2", category: "Beach", price: 28, rating: 5.0, image: require("../Image/homescreen/ApartmentinOmaha.png") },
-    { id: 5, name: "Mountain Cabin 2", category: "Mountain", price: 35, rating: 4.8, image: require("../Image/homescreen/ApartmentinSanJose.png") },
-    { id: 6, name: "Camping Tent 2", category: "Camping", price: 15, rating: 4.5, image: require("../Image/homescreen/ApartmentinSanJose.png") },
-    { id: 7, name: "Apartment in Omaha 3", category: "Beach", price: 28, rating: 5.0, image: require("../Image/homescreen/ApartmentinOmaha.png") },
-    { id: 8, name: "Mountain Cabin 3", category: "Mountain", price: 35, rating: 4.8, image: require("../Image/homescreen/ApartmentinSanJose.png") },
-    { id: 9, name: "Camping Tent 3", category: "Camping", price: 15, rating: 4.5, image: require("../Image/homescreen/ApartmentinSanJose.png") },
-    { id: 10, name: "Apartment in Omaha 4", category: "Beach", price: 28, rating: 5.0, image: require("../Image/homescreen/ApartmentinOmaha.png") },
-    { id: 11, name: "Mountain Cabin 4", category: "Mountain", price: 35, rating: 4.8, image: require("../Image/homescreen/ApartmentinSanJose.png") },
-    { id: 12, name: "Camping Tent 4", category: "Camping", price: 15, rating: 4.5, image: require("../Image/homescreen/ApartmentinSanJose.png") },
+    {
+      id: 1,
+      name: "Apartment Luxury 1",
+      category: "Beach",
+      price: 28,
+      rating: 5.0,
+      image: require("../Image/homescreen/ApartmentinOmaha.png"),
+    },
+    {
+      id: 2,
+      name: "Mountain Luxury 1",
+      category: "Mountain",
+      price: 35,
+      rating: 4.8,
+      image: require("../Image/homescreen/Mountain.png"),
+    },
+    {
+      id: 3,
+      name: "Camping Tent",
+      category: "Camping",
+      price: 15,
+      rating: 4.5,
+      image: require("../Image/homescreen/camping.png"),
+    },
+    {
+      id: 4,
+      name: "Apartment View Beaches",
+      category: "Beach",
+      price: 28,
+      rating: 5.0,
+      image: require("../Image/homescreen/Beach.png"),
+    },
+    {
+      id: 5,
+      name: "Mountain Luxury 2",
+      category: "Mountain",
+      price: 35,
+      rating: 4.8,
+      image: require("../Image/homescreen/Mountain.png"),
+    },
+    {
+      id: 6,
+      name: "Camping Tent 2",
+      category: "Camping",
+      price: 15,
+      rating: 4.5,
+      image: require("../Image/homescreen/camping.png"),
+    },
+    {
+      id: 7,
+      name: "Apartment Luxury View Beaches",
+      category: "Beach",
+      price: 28,
+      rating: 5.0,
+      image: require("../Image/homescreen/ApartmentinOmaha.png"),
+    },
+    {
+      id: 8,
+      name: "Mountain Luxury 3",
+      category: "Mountain",
+      price: 35,
+      rating: 4.8,
+      image: require("../Image/homescreen/Mountain.png"),
+    },
+    {
+      id: 9,
+      name: "Camping Luxury 3",
+      category: "Camping",
+      price: 15,
+      rating: 4.5,
+      image: require("../Image/homescreen/camping.png"),
+    },
+    {
+      id: 10,
+      name: "Apartment Luxury 2",
+      category: "Beach",
+      price: 28,
+      rating: 5.0,
+      image: require("../Image/homescreen/Beach.png"),
+    },
+    {
+      id: 11,
+      name: "Mountain Luxury 4",
+      category: "Mountain",
+      price: 35,
+      rating: 4.8,
+      image: require("../Image/homescreen/Mountain.png"),
+    },
+    {
+      id: 12,
+      name: "Camping Tent 4",
+      category: "Camping",
+      price: 15,
+      rating: 4.5,
+      image: require("../Image/homescreen/camping.png"),
+    },
     // Thêm sản phẩm khác nếu cần
   ];
 
   const categories = ["Beach", "Mountain", "Camping"];
 
+  
+
   useEffect(() => {
     const selectedCategory = categories[selectedNav];
-    const filtered = data.filter((item) => item.category === selectedCategory);
+    const filtered = data.filter(
+      (item) =>
+        item.category === selectedCategory &&
+        item.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
     setFilteredProducts(filtered);
-  }, [selectedNav]);
+  }, [selectedNav, searchQuery]);
 
   const handleProductDetail = (product) => {
-    navigation.navigate("ProductDetail", { product });
+    navigation.navigate("DetailScreen", { product });
   };
 
   const handleFavorite = () => {
-    navigation.navigate("Favorites");
+    navigation.navigate("Favorites", { favorites });
   };
 
   const handleProfile = () => {
     navigation.navigate("ProfileScreen");
   };
 
+  const handleInbox = () => {
+    navigation.navigate("InboxScreen");
+  };
+
+  const toggleFavorite = (product) => {
+    setFavorites((prevFavorites) => {
+      if (prevFavorites.find((item) => item.id === product.id)) {
+        return prevFavorites.filter((item) => item.id !== product.id); // Xóa khỏi danh sách
+      } else {
+        return [...prevFavorites, product]; // Thêm vào danh sách
+      }
+    });
+  };
+
   return (
     <View style={{ height: "100vh", overflow: "auto" }}>
       <SafeAreaView style={styles.container}>
         <ScrollView style={styles.ScrollViewContainer}>
-          {/*Search*/}
+          {/* Search */}
           <View style={styles.search}>
             <TouchableOpacity>
               <Image
@@ -59,12 +167,20 @@ const HomeScreen = ({ navigation }) => {
             <TextInput
               placeholder="Where do you want stay?"
               style={styles.inputSeacrch}
-            ></TextInput>
+              value={searchQuery}
+              onChangeText={(text) => setSearchQuery(text)}
+            />
           </View>
           {/*Navigation*/}
           <View style={styles.navigation}>
             {categories.map((category, index) => (
-              <View key={index} style={[styles.navItem, selectedNav === index && styles.activeNav]}>
+              <View
+                key={index}
+                style={[
+                  styles.navItem,
+                  selectedNav === index && styles.activeNav,
+                ]}
+              >
                 <TouchableOpacity
                   style={styles.navButtonContainer}
                   onPress={() => setSelectedNav(index)}
@@ -94,6 +210,22 @@ const HomeScreen = ({ navigation }) => {
               >
                 <Image source={product.image} style={styles.productImage} />
               </TouchableOpacity>
+
+              {/* Icon yêu thích */}
+              <TouchableOpacity
+                style={styles.favoriteIcon}
+                onPress={() => toggleFavorite(product)}
+              >
+                <Image
+                  source={
+                    favorites.find((item) => item.id === product.id)
+                      ? require("../Image/homescreen/icon/heart_filled.png") // Trái tim đầy (màu đỏ)
+                      : require("../Image/homescreen/icon/heart_outline.png") // Trái tim rỗng (màu trắng)
+                  }
+                  style={styles.heartIcon}
+                />
+              </TouchableOpacity>
+
               <View style={styles.productLine1}>
                 <Text style={styles.titleProduct}>{product.name}</Text>
                 <View style={styles.rate}>
@@ -117,48 +249,119 @@ const HomeScreen = ({ navigation }) => {
         {/*Footer*/}
         <View style={styles.footer}>
           <View style={styles.footerItemContainer}>
-            <TouchableOpacity style={styles.footerItem}>
+            <TouchableOpacity
+              style={styles.footerItem}
+              onPress={() => setSelectedFooter("Search")}
+            >
               <Image
                 source={require("../Image/dataicon/search.png")}
-                style={styles.footerIcon}
+                style={[
+                  styles.footerIcon,
+                  selectedFooter === "Search" && styles.activeFooterIcon,
+                ]}
               />
-              <Text style={styles.textFooter}>Search</Text>
+              <Text
+                style={[
+                  styles.textFooter,
+                  selectedFooter === "Search" && styles.activeFooterText,
+                ]}
+              >
+                Search
+              </Text>
             </TouchableOpacity>
           </View>
           <View style={styles.footerItemContainer}>
-            <TouchableOpacity style={styles.footerItem} onPress={handleFavorite}>
+            <TouchableOpacity
+              style={styles.footerItem}
+              onPress={() => {
+                setSelectedFooter("Favorites");
+                handleFavorite();
+              }}
+            >
               <Image
                 source={require("../Image/homescreen/icon/favourite.png")}
-                style={styles.footerIcon}
+                style={[
+                  styles.footerIcon,
+                  selectedFooter === "Favorites" && styles.activeFooterIcon,
+                ]}
               />
-              <Text style={styles.textFooter}>Favorites</Text>
+              <Text
+                style={[
+                  styles.textFooter,
+                  selectedFooter === "Favorites" && styles.activeFooterText,
+                ]}
+              >
+                Favorites
+              </Text>
             </TouchableOpacity>
           </View>
           <View style={styles.footerItemContainer}>
-            <TouchableOpacity style={styles.footerItem}>
+            <TouchableOpacity
+              style={styles.footerItem}
+              onPress={() => setSelectedFooter("Bookings")}
+            >
               <Image
                 source={require("../Image/homescreen/icon/application.png")}
-                style={styles.footerIcon}
+                style={[
+                  styles.footerIcon,
+                  selectedFooter === "Bookings" && styles.activeFooterIcon,
+                ]}
               />
-              <Text style={styles.textFooter}>Bookings</Text>
+              <Text
+                style={[
+                  styles.textFooter,
+                  selectedFooter === "Bookings" && styles.activeFooterText,
+                ]}
+              >
+                Bookings
+              </Text>
             </TouchableOpacity>
           </View>
           <View style={styles.footerItemContainer}>
-            <TouchableOpacity style={styles.footerItem}>
+            <TouchableOpacity
+              style={styles.footerItem} 
+              onPress={() => {setSelectedFooter("Inbox"), handleInbox()}}
+            >
               <Image
                 source={require("../Image/dataicon/chat.png")}
-                style={styles.footerIcon}
+                style={[
+                  styles.footerIcon,
+                  selectedFooter === "Inbox" && styles.activeFooterIcon,
+                ]}
               />
-              <Text style={styles.textFooter}>Inbox</Text>
+              <Text
+                style={[
+                  styles.textFooter,
+                  selectedFooter === "Inbox" && styles.activeFooterText,
+                ]}
+              >
+                Inbox
+              </Text>
             </TouchableOpacity>
           </View>
           <View style={styles.footerItemContainer}>
-            <TouchableOpacity style={styles.footerItem} onPress={handleProfile}>
+            <TouchableOpacity
+              style={styles.footerItem}
+              onPress={() => {
+                setSelectedFooter("Profile");
+                handleProfile();
+              }}
+            >
               <Image
                 source={require("../Image/dataicon/usericon.png")}
-                style={styles.footerIcon}
+                style={[
+                  styles.footerIcon,
+                  selectedFooter === "Profile" && styles.activeFooterIcon,
+                ]}
               />
-              <Text style={styles.textFooter}>Profile</Text>
+              <Text
+                style={[
+                  styles.textFooter,
+                  selectedFooter === "Profile" && styles.activeFooterText,
+                ]}
+              >
+                Profile
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -172,7 +375,7 @@ const styles = StyleSheet.create({
     width: "100%",
     margin: 0,
     padding: 0,
-    backgroundColor: '#E0FFFF',
+    backgroundColor: "#E0FFFF",
   },
   ScrollViewContainer: {
     backgroundColor: "#fff",
@@ -202,6 +405,22 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     paddingLeft: 40,
     objectFit: true,
+  },
+  favoriteIcon: {
+    position: "absolute",
+    top: 35,
+    right: 25,
+    zIndex: 10,
+    borderWidth: 1,
+    borderColor: "#fff",
+    borderRadius: 20,
+    padding: 5,
+    backgroundColor: "#fff",
+  },
+  heartIcon: {
+    width: 28,
+    height: 28,
+    resizeMode: "contain",
   },
   navigation: {
     width: "100%",
@@ -305,6 +524,7 @@ const styles = StyleSheet.create({
     width: 27,
     height: 27,
     resizeMode: "contain",
+    tintColor: "#000", // Màu mặc định của icon
   },
   footerItemContainer: {
     flex: 1,
@@ -313,6 +533,13 @@ const styles = StyleSheet.create({
   },
   textFooter: {
     fontSize: 12,
+    color: "#000", // Màu mặc định của chữ
+  },
+  activeFooterIcon: {
+    tintColor: "#00BFFF", // Màu xanh khi được chọn
+  },
+  activeFooterText: {
+    color: "#00BFFF", // Màu xanh khi được chọn
   },
 });
 

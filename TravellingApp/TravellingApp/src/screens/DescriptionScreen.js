@@ -1,11 +1,12 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 
-const DescriptionScreen = () => (
+const DescriptionScreen = ({ navigation }) => (
   <ScrollView style={styles.container}>
     {/* Header */}
     <View style={styles.header}>
-      <TouchableOpacity>
+      <TouchableOpacity 
+        onPress={() => {navigation.goBack()}}>
         <Image source={require('../Image/descriptionscreen/backicon.png')} style={styles.icon} />
       </TouchableOpacity>
       <Text style={styles.headerTitle}>Description</Text>
