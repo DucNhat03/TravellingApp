@@ -10,13 +10,13 @@ import {
   SafeAreaView,
 } from "react-native";
 
-const FavoritesScreen = () => (
+const FavoritesScreen = ({ navigation }) => (
   <View style={{ height: "100vh", overflow: "auto" }}>
   <SafeAreaView style={styles.container}>
     <ScrollView style={styles.scrollContainer}>
       {/*Search*/}
       <View style={styles.header}>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
           <Image
             source={require("../Image/dataicon/backicon.png")}
             style={styles.backIcon}

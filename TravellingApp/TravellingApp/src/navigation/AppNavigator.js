@@ -19,12 +19,13 @@ import IntroduceScreen from "../screens/Introduce";
 import Login from "../screens/Login";
 import ForgotPassword from "../screens/ForgotPassword";
 import RegisterAccount from "../screens/RegisterAccountScreen";
+import ProfileScreen from "../screens/ProfileScreen";
 
 const Stack = createStackNavigator();
 
 const AppNavigator = () => (
   <NavigationContainer>
-    <Stack.Navigator initialRouteName="Introduce">
+    <Stack.Navigator initialRouteName="Home">
       <Stack.Screen
         name="Introduce"
         component={IntroduceScreen}
@@ -40,6 +41,11 @@ const AppNavigator = () => (
         component={Login}
         options={{ headerShown: false }}
       />
+      <Stack.Screen
+      name="ProfileScreen"
+      component={ProfileScreen}
+      options={{ headerShown: false }}
+    />
       <Stack.Screen
         name="RegisterAccount"
         component={RegisterAccount}

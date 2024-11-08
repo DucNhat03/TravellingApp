@@ -31,7 +31,8 @@
     "react-native-picker-select": "^9.3.1",
     "react-native-reanimated": "^3.16.1",
     "react-native-vector-icons": "^10.2.0",
-    "react-native-web": "^0.19.13"
+    "react-native-web": "^0.19.13",
+    "travellingapp": "file:"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"
