@@ -17,8 +17,12 @@ const LoginScreen = ({ navigation }) => {
   const [countryCode, setCountryCode] = useState('US');
   const [phoneNumber, setPhoneNumber] = useState('');
 
-  const handleLoginLink = () => {
-    navigation.navigate('Home');
+  const navLogin = () => {
+    navigation.navigate('Login2');
+  };
+
+  const navRegister = () => {
+    navigation.navigate('RegisterAccount');
   };
 
   const countries = [
@@ -70,7 +74,7 @@ const LoginScreen = ({ navigation }) => {
           />
         </View>
 
-        <Button title="Continue" buttonStyle={styles.continueButton} onPress={handleLoginLink}/>
+        <Button title="Continue" buttonStyle={styles.continueButton} onPress={navRegister}/>
 
         <Text style={styles.orText}>or</Text>
 
@@ -104,7 +108,7 @@ const LoginScreen = ({ navigation }) => {
           </Text>.
         </Text>
 
-        <TouchableOpacity onPress={handleLoginLink}>
+        <TouchableOpacity onPress={navLogin}>
           <Text style={styles.loginText}>
             Already had an account? <Text style={styles.linkText}>Log in</Text>
           </Text>

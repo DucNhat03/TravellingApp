@@ -16,6 +16,9 @@ import FilterScreen from "../screens/FilterScreen";
 import DetailScreen from "../screens/DetailScreen";
 import ConfirmAndPayScreen from "../screens/ConfirmAndPayScreen";
 import IntroduceScreen from "../screens/Introduce";
+import Login from "../screens/Login";
+import ForgotPassword from "../screens/ForgotPassword";
+import RegisterAccount from "../screens/RegisterAccountScreen";
 
 const Stack = createStackNavigator();
 
@@ -30,6 +33,21 @@ const AppNavigator = () => (
       <Stack.Screen
         name="Login"
         component={LoginScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="Login2"
+        component={Login}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="RegisterAccount"
+        component={RegisterAccount}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="ForgotPassword"
+        component={ForgotPassword}
         options={{ headerShown: false }}
       />
       <Stack.Screen

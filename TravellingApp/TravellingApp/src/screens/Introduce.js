@@ -7,10 +7,13 @@ import {
 } from "react-native";
 
 const IntroduceScreen = ({ navigation }) => {
- 
+  const handleNavigate = () => {
+    navigation.navigate('Login');
+  }
+
   return (
     <View style={styles.container}>
-        <TouchableOpacity >
+        <TouchableOpacity onPress={() => handleNavigate()}>
             <Image
                 source={require("../Image/Introduce/logoApp.png")}
                 style={styles.Introduce}
