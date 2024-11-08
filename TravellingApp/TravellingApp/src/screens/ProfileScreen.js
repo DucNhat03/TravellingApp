@@ -49,7 +49,7 @@ const ProfileScreen = ({ navigation, route }) => {
             onPress={() => navigation.goBack()}
         >
             <Image
-                source={require("../Image/dataicon/back.png")}
+                source={require("../Image/dataicon/backicon.png")}
                 style={{ width: 25, height: 25 }}
             />
         </TouchableOpacity>

@@ -36,11 +36,13 @@ const reviews = [
   }
 ];
 
-const ReviewsScreen = () => (
+const ReviewsScreen = ({ navigation }) => (
+  <View style={{ height: "100vh", overflow: "auto" }}>
   <ScrollView style={styles.container}>
     {/* Header */}
     <View style={styles.header}>
-        <TouchableOpacity>
+        <TouchableOpacity
+          onPress={() =>  {navigation.goBack()}}>
           <Image source={require('../Image/facilities/backicon.png')} style={styles.icon} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Reviews</Text>
@@ -84,6 +86,7 @@ const ReviewsScreen = () => (
       ))}
     </View>
   </ScrollView>
+  </View>
 );
 
 const styles = StyleSheet.create({
