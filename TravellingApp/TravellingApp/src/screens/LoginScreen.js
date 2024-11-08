@@ -11,7 +11,6 @@ import {
 import { Button, Icon } from 'react-native-elements';
 import ModalDropdown from 'react-native-modal-dropdown';
 
-import HomeScreen from '../screens/HomeScreen';
 
 
 const LoginScreen = ({ navigation }) => {
@@ -23,12 +22,12 @@ const LoginScreen = ({ navigation }) => {
   };
 
   const countries = [
-    { label: 'USA', value: 'US', flag: require('../flags/us.png'), code: '+1' },
-    { label: 'Vietnam', value: 'VN', flag: require('../flags/vn.png'), code: '+84' },
-    { label: 'Australia', value: 'AU', flag: require('../flags/au.png'), code: '+61' },
-    { label: 'Germany', value: 'DE', flag: require('../flags/de.png'), code: '+49' },
-    { label: 'India', value: 'IN', flag: require('../flags/in.png'), code: '+91' },
-    { label: 'France', value: 'FR', flag: require('../flags/fr.png'), code: '+33' },
+    { label: 'USA', value: 'US', flag: require('../Image/flags/us.png'), code: '+1' },
+    { label: 'Vietnam', value: 'VN', flag: require('../Image/flags/vn.png'), code: '+84' },
+    { label: 'Australia', value: 'AU', flag: require('../Image/flags/au.png'), code: '+61' },
+    { label: 'Germany', value: 'DE', flag: require('../Image/flags/de.png'), code: '+49' },
+    { label: 'India', value: 'IN', flag: require('../Image/flags/in.png'), code: '+91' },
+    { label: 'France', value: 'FR', flag: require('../Image/flags/fr.png'), code: '+33' },
   ];
 
   const getPlaceholder = () => {

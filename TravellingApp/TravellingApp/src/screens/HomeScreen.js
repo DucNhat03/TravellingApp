@@ -18,7 +18,7 @@ const HomeScreen = ({ navigation }) => {
           <View style={styles.search}>
             <TouchableOpacity>
               <Image
-                source={require("../dataicon/search.png")}
+                source={require("../Image/dataicon/search.png")}
                 style={styles.searchIcon}
               />
             </TouchableOpacity>
@@ -35,7 +35,7 @@ const HomeScreen = ({ navigation }) => {
                 onPress={() => setSelectedNav(0)} // item đầu tiên
               >
                 <Image
-                  source={require("../homescreen/icon/cayduaa.png")}
+                  source={require("../Image/homescreen/icon/cayduaa.png")}
                   style={styles.navItemImage}
                 />
                 <Text style={{fontSize: 12}}>Beach</Text>
@@ -48,7 +48,7 @@ const HomeScreen = ({ navigation }) => {
                 onPress={() => setSelectedNav(1)} 
               >
                 <Image
-                  source={require("../homescreen/icon/nuidoi.png")}
+                  source={require("../Image/homescreen/icon/nuidoi.png")}
                   style={styles.navItemImage}
                 />
                 <Text style={{fontSize: 12}}>Mountain</Text>
@@ -60,7 +60,7 @@ const HomeScreen = ({ navigation }) => {
                 onPress={() => setSelectedNav(2)} 
               >
                 <Image
-                  source={require("../homescreen/icon/tupleu.png")}
+                  source={require("../Image/homescreen/icon/tupleu.png")}
                   style={styles.navItemImage}
                 />
                 <Text style={{fontSize: 12}}>Camping</Text>
@@ -72,7 +72,7 @@ const HomeScreen = ({ navigation }) => {
           <View style={styles.product}>
             <TouchableOpacity style={styles.productImageContainer}>
               <Image
-                source={require("../homescreen/ApartmentinOmaha.png")}
+                source={require("../Image/homescreen/ApartmentinOmaha.png")}
                 style={styles.productImage}
               />
             </TouchableOpacity>
@@ -80,7 +80,7 @@ const HomeScreen = ({ navigation }) => {
               <Text style={styles.titleProduct}>Apartment in Omaha</Text>
               <View style={styles.rate}>
                 <Image
-                  source={require("../homescreen/icon/star.png")}
+                  source={require("../Image/homescreen/icon/star.png")}
                   style={styles.starIcon}
                 />
                 <Text style={styles.textRate}>5.0</Text>
@@ -99,7 +99,7 @@ const HomeScreen = ({ navigation }) => {
           <View style={styles.product}>
             <TouchableOpacity style={styles.productImageContainer}>
               <Image
-                source={require("../homescreen/ApartmentinSanJose.png")}
+                source={require("../Image/homescreen/ApartmentinSanJose.png")}
                 style={styles.productImage}
               />
             </TouchableOpacity>
@@ -107,7 +107,7 @@ const HomeScreen = ({ navigation }) => {
               <Text style={styles.titleProduct}>Apartment in Omaha</Text>
               <View style={styles.rate}>
                 <Image
-                  source={require("../homescreen/icon/star.png")}
+                  source={require("../Image/homescreen/icon/star.png")}
                   style={styles.starIcon}
                 />
                 <Text style={styles.textRate}>5.0</Text>
@@ -127,7 +127,7 @@ const HomeScreen = ({ navigation }) => {
           <View style={styles.footerItemContainer}>
             <TouchableOpacity style={styles.footerItem}>
               <Image
-                source={require("../dataicon/search.png")}
+                source={require("../Image/dataicon/search.png")}
                 style={styles.footerIcon}
               />
               <Text style={styles.textFooter}>Search</Text>
@@ -137,7 +137,7 @@ const HomeScreen = ({ navigation }) => {
             <TouchableOpacity style={styles.footerItem}
               onPress={() => {handleFavorite()}}>
               <Image
-                source={require("../homescreen/icon/favourite.png")}
+                source={require("../Image/homescreen/icon/favourite.png")}
                 style={styles.footerIcon}
               />
               <Text style={styles.textFooter}>Favorites</Text>
@@ -146,7 +146,7 @@ const HomeScreen = ({ navigation }) => {
           <View style={styles.footerItemContainer}>
             <TouchableOpacity style={styles.footerItem}>
               <Image
-                source={require("../homescreen/icon/application.png")}
+                source={require("../Image/homescreen/icon/application.png")}
                 style={styles.footerIcon}
               />
               <Text style={styles.textFooter}>Bookings</Text>
@@ -155,7 +155,7 @@ const HomeScreen = ({ navigation }) => {
           <View style={styles.footerItemContainer}>
             <TouchableOpacity style={styles.footerItem}>
               <Image
-                source={require("../dataicon/chat.png")}
+                source={require("../Image/dataicon/chat.png")}
                 style={styles.footerIcon}
               />
               <Text style={styles.textFooter}>Inbox</Text>
@@ -164,7 +164,7 @@ const HomeScreen = ({ navigation }) => {
           <View style={styles.footerItemContainer}>
             <TouchableOpacity style={styles.footerItem}>
               <Image
-                source={require("../dataicon/usericon.png")}
+                source={require("../Image/dataicon/usericon.png")}
                 style={styles.footerIcon}
               />
               <Text style={styles.textFooter}>Profile</Text>

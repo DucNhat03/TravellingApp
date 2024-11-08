@@ -11,9 +11,9 @@ import {
 
 const SearchScreen = ({ navigation }) => {
   const destinations = [
-    { id: "1", name: "Anywhere", image: require("../homescreen/ApartmentinOmaha.png") },
-    { id: "2", name: "Europe", image: require("../homescreen/ApartmentinOmaha.png") },
-    { id: "3", name: "Asia", image: require("../homescreen/ApartmentinOmaha.png") },
+    { id: "1", name: "Anywhere", image: require("../Image/homescreen/ApartmentinOmaha.png") },
+    { id: "2", name: "Europe", image: require("../Image/homescreen/ApartmentinOmaha.png") },
+    { id: "3", name: "Asia", image: require("../Image/homescreen/ApartmentinOmaha.png") },
   ];
   return (
     <View style={styles.container}>
@@ -30,7 +30,7 @@ const SearchScreen = ({ navigation }) => {
         <View style={styles.search}>
           <TouchableOpacity>
             <Image
-              source={require("../dataicon/search.png")}
+              source={require("../Image/dataicon/search.png")}
               style={styles.searchIcon}
             />
           </TouchableOpacity>
@@ -82,7 +82,7 @@ const SearchScreen = ({ navigation }) => {
         </TouchableOpacity>
         <TouchableOpacity style={styles.searchButton}>
           <Image
-            source={require("../dataicon/search.png")}
+            source={require("../Image/dataicon/search.png")}
             style={styles.searchIconButton}
           />
           <Text style={styles.searchButtonText}>Search</Text>

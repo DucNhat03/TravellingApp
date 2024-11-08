@@ -38,7 +38,7 @@ const PaymentSuccessScreen = () => {
   return (
     <View style={styles.container}>
       {/* Icon Success */}
-      <Image source={require('../dataicon/checkBigSize.png')} style={styles.successIcon} />
+      <Image source={require('../Image/dataicon/checkBigSize.png')} style={styles.successIcon} />
 
       {/* Title */}
       <Text style={styles.title}>Payment success!</Text>

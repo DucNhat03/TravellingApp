@@ -8,7 +8,7 @@ const reviews = [
     time: "A day ago",
     rating: 5,
     comment: "We loved staying in this charming home! It had all the amenities we needed, and the historic...",
-    avatar: require('../reviewscreen/logo.png')
+    avatar: require('../Image/reviewscreen/logo.png')
   },
   {
     id: 2,
@@ -16,7 +16,7 @@ const reviews = [
     time: "A day ago",
     rating: 4,
     comment: "While the location of this home was convenient, we were disappointed with the cleanliness and overall...",
-    avatar: require('../reviewscreen/logo.png')
+    avatar: require('../Image/reviewscreen/logo.png')
   },
   {
     id: 3,
@@ -24,7 +24,7 @@ const reviews = [
     time: "A day ago",
     rating: 5,
     comment: "This home was perfect for our family vacation! The kids loved the pool and the game room...",
-    avatar: require('../reviewscreen/logo.png')
+    avatar: require('../Image/reviewscreen/logo.png')
   },
   {
     id: 4,
@@ -32,7 +32,7 @@ const reviews = [
     time: "A day ago",
     rating: 5,
     comment: "The photos don't do this home justice - it's absolutely stunning in person...",
-    avatar: require('../reviewscreen/logo.png')
+    avatar: require('../Image/reviewscreen/logo.png')
   }
 ];
 
@@ -41,7 +41,7 @@ const ReviewsScreen = () => (
     {/* Header */}
     <View style={styles.header}>
         <TouchableOpacity>
-          <Image source={require('../facilities/backicon.png')} style={styles.icon} />
+          <Image source={require('../Image/facilities/backicon.png')} style={styles.icon} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Reviews</Text>
     </View>
@@ -51,7 +51,7 @@ const ReviewsScreen = () => (
     <View style={styles.summaryContainer}>
       <View style={styles.ratingContainer}>
         <Text style={styles.rating}>5/5</Text>
-        <Image source={require('../reviewscreen/rating5.png')} style={styles.starIcon} />
+        <Image source={require('../Image/reviewscreen/rating5.png')} style={styles.starIcon} />
       </View>
 
       {/* Rating distribution */}
@@ -75,7 +75,7 @@ const ReviewsScreen = () => (
           <View style={styles.reviewContent}>
             <View style={styles.reviewHeader}>
               <Text style={styles.reviewerName}>{review.name}</Text>
-              <Image source={require('../reviewscreen/rating5.png')} style={styles.starIcon} />
+              <Image source={require('../Image/reviewscreen/rating5.png')} style={styles.starIcon} />
             </View>
             <Text style={styles.reviewTime}>{review.time}</Text>
             <Text style={styles.reviewText}>{review.comment}</Text>

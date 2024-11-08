@@ -8,7 +8,7 @@ const DetailsScreen = () => (
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity>
-          <Image source={require('../facilities/backicon.png')} style={styles.icon} />
+          <Image source={require('../Image/facilities/backicon.png')} style={styles.icon} />
         </TouchableOpacity>
         <Text style={styles.headerText}>Facilities & services</Text>
       </View>
@@ -24,23 +24,23 @@ const DetailsScreen = () => (
         </View>
         
         <View style={styles.facility}>
-          <Image source={require('../facilities/wifi.png')} style={styles.facilityIcon} />
+          <Image source={require('../Image/facilities/wifi.png')} style={styles.facilityIcon} />
           <Text style={styles.facilityText}>Wifi</Text>
         </View>
         <View style={styles.facility}>
-          <Image source={require('../facilities/kitchen.png')} style={styles.facilityIcon} />
+          <Image source={require('../Image/facilities/kitchen.png')} style={styles.facilityIcon} />
           <Text style={styles.facilityText}>Kitchen</Text>
         </View>
         <View style={styles.facility}>
-          <Image source={require('../facilities/exercise.png')} style={styles.facilityIcon} />
+          <Image source={require('../Image/facilities/exercise.png')} style={styles.facilityIcon} />
           <Text style={styles.facilityText}>Exercise equipment</Text>
         </View>
         <View style={styles.facility}>
-          <Image source={require('../facilities/pool.png')} style={styles.facilityIcon} />
+          <Image source={require('../Image/facilities/pool.png')} style={styles.facilityIcon} />
           <Text style={styles.facilityText}>Pool</Text>
         </View>
         <View style={styles.facility}>
-          <Image source={require('../facilities/garden.png')} style={styles.facilityIcon} />
+          <Image source={require('../Image/facilities/garden.png')} style={styles.facilityIcon} />
           <Text style={styles.facilityText}>Garden</Text>
         </View>
       </View>
@@ -51,25 +51,25 @@ const DetailsScreen = () => (
         
         <Text style={styles.subsectionTitle}>Cleaning & laundry</Text>
         <View style={styles.facility}>
-          <Image source={require('../facilities/washer.png')} style={styles.facilityIcon} />
+          <Image source={require('../Image/facilities/washer.png')} style={styles.facilityIcon} />
           <Text style={styles.facilityText}>Washer</Text>
         </View>
         <View style={styles.facility}>
-          <Image source={require('../facilities/dryer.png')} style={styles.facilityIcon} />
+          <Image source={require('../Image/facilities/dryer.png')} style={styles.facilityIcon} />
           <Text style={styles.facilityText}>Free dryer - In unit</Text>
         </View>
         <View style={styles.facility}>
-          <Image source={require('../facilities/iron.png')} style={styles.facilityIcon} />
+          <Image source={require('../Image/facilities/iron.png')} style={styles.facilityIcon} />
           <Text style={styles.facilityText}>Iron</Text>
         </View>
 
         <Text style={styles.subsectionTitle}>Bathroom</Text>
         <View style={styles.facility}>
-          <Image source={require('../facilities/bathtub.png')} style={styles.facilityIcon} />
+          <Image source={require('../Image/facilities/bathtub.png')} style={styles.facilityIcon} />
           <Text style={styles.facilityText}>Bathtub</Text>
         </View>
         <View style={styles.facility}>
-          <Image source={require('../facilities/hairdryer.png')} style={styles.facilityIcon} />
+          <Image source={require('../Image/facilities/hairdryer.png')} style={styles.facilityIcon} />
           <Text style={styles.facilityText}>Hair dryer</Text>
         </View>
       </View>

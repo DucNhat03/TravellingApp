@@ -18,14 +18,14 @@ const FavoritesScreen = () => (
       <View style={styles.header}>
         <TouchableOpacity>
           <Image
-            source={require("../dataicon/backicon.png")}
+            source={require("../Image/dataicon/backicon.png")}
             style={styles.backIcon}
           />
         </TouchableOpacity>
         <Text style={styles.textHeader}>Favorites</Text>
         <TouchableOpacity>
           <Image
-            source={require("../dataicon/more.png")}
+            source={require("../Image/dataicon/more.png")}
             style={styles.moreIcon}
           />
         </TouchableOpacity>
@@ -39,7 +39,7 @@ const FavoritesScreen = () => (
       {/*Product 1 */}
       <TouchableOpacity style={styles.product}>
         <Image
-          source={require("../homescreen/ApartmentinOmaha.png")}
+          source={require("../Image/homescreen/ApartmentinOmaha.png")}
           style={styles.productImage}
         />
         <TouchableOpacity style={styles.productImageContainer}>
@@ -58,7 +58,7 @@ const FavoritesScreen = () => (
             }}
           >
             <Image
-              source={require("../homescreen/icon/favourite.png")}
+              source={require("../Image/homescreen/icon/favourite.png")}
               style={{ width: 25, height: 25, resizeMode: "contain" }}
             />
           </View>
@@ -68,7 +68,7 @@ const FavoritesScreen = () => (
           <Text style={styles.titleProduct}>Apartment in Omaha</Text>
           <View style={styles.rate}>
             <Image
-              source={require("../homescreen/icon/star.png")}
+              source={require("../Image/homescreen/icon/star.png")}
               style={styles.starIcon}
             />
             <Text style={styles.textRate}>5.0</Text>
@@ -77,7 +77,7 @@ const FavoritesScreen = () => (
         <View style={styles.productLine2}>
           <View style={{ flexDirection: "row" }}>
             <Image
-              source={require("../dataicon/singlebed.png")}
+              source={require("../Image/dataicon/singlebed.png")}
               style={styles.bedIcon}
             />
             <Text style={styles.type}>1 bedroom</Text>
@@ -92,7 +92,7 @@ const FavoritesScreen = () => (
       {/*Product 2 */}
       <TouchableOpacity style={styles.product}>
         <Image
-          source={require("../homescreen/ApartmentinOmaha.png")}
+          source={require("../Image/homescreen/ApartmentinOmaha.png")}
           style={styles.productImage}
         />
         <TouchableOpacity style={styles.productImageContainer}>
@@ -111,7 +111,7 @@ const FavoritesScreen = () => (
             }}
           >
             <Image
-              source={require("../homescreen/icon/favourite.png")}
+              source={require("../Image/homescreen/icon/favourite.png")}
               style={{ width: 25, height: 25, resizeMode: "contain" }}
             />
           </View>
@@ -121,7 +121,7 @@ const FavoritesScreen = () => (
           <Text style={styles.titleProduct}>Apartment in Omaha</Text>
           <View style={styles.rate}>
             <Image
-              source={require("../homescreen/icon/star.png")}
+              source={require("../Image/homescreen/icon/star.png")}
               style={styles.starIcon}
             />
             <Text style={styles.textRate}>5.0</Text>
@@ -130,7 +130,7 @@ const FavoritesScreen = () => (
         <View style={styles.productLine2}>
           <View style={{ flexDirection: "row" }}>
             <Image
-              source={require("../dataicon/singlebed.png")}
+              source={require("../Image/dataicon/singlebed.png")}
               style={styles.bedIcon}
             />
             <Text style={styles.type}>1 bedroom</Text>
@@ -145,7 +145,7 @@ const FavoritesScreen = () => (
       {/*Product 3 */}
       <TouchableOpacity style={styles.product}>
         <Image
-          source={require("../homescreen/ApartmentinOmaha.png")}
+          source={require("../Image/homescreen/ApartmentinOmaha.png")}
           style={styles.productImage}
         />
         <TouchableOpacity style={styles.productImageContainer}>
@@ -164,7 +164,7 @@ const FavoritesScreen = () => (
             }}
           >
             <Image
-              source={require("../homescreen/icon/favourite.png")}
+              source={require("../Image/homescreen/icon/favourite.png")}
               style={{ width: 25, height: 25, resizeMode: "contain" }}
             />
           </View>
@@ -174,7 +174,7 @@ const FavoritesScreen = () => (
           <Text style={styles.titleProduct}>Apartment in Omaha</Text>
           <View style={styles.rate}>
             <Image
-              source={require("../homescreen/icon/star.png")}
+              source={require("../Image/homescreen/icon/star.png")}
               style={styles.starIcon}
             />
             <Text style={styles.textRate}>5.0</Text>
@@ -183,7 +183,7 @@ const FavoritesScreen = () => (
         <View style={styles.productLine2}>
           <View style={{ flexDirection: "row" }}>
             <Image
-              source={require("../dataicon/singlebed.png")}
+              source={require("../Image/dataicon/singlebed.png")}
               style={styles.bedIcon}
             />
             <Text style={styles.type}>1 bedroom</Text>
@@ -204,7 +204,7 @@ const FavoritesScreen = () => (
       <View style={styles.footerItemContainer}>
         <TouchableOpacity style={styles.footerItem}>
           <Image
-            source={require("../dataicon/search.png")}
+            source={require("../Image/dataicon/search.png")}
             style={styles.footerIcon}
           />
           <Text style={styles.textFooter}>Search</Text>
@@ -213,7 +213,7 @@ const FavoritesScreen = () => (
       <View style={styles.footerItemContainer}>
         <TouchableOpacity style={styles.footerItem}>
           <Image
-            source={require("../homescreen/icon/favourite.png")}
+            source={require("../Image/homescreen/icon/favourite.png")}
             style={styles.footerIcon}
           />
           <Text style={styles.textFooter}>Favorites</Text>
@@ -222,7 +222,7 @@ const FavoritesScreen = () => (
       <View style={styles.footerItemContainer}>
         <TouchableOpacity style={styles.footerItem}>
           <Image
-            source={require("../homescreen/icon/application.png")}
+            source={require("../Image/homescreen/icon/application.png")}
             style={styles.footerIcon}
           />
           <Text style={styles.textFooter}>Bookings</Text>
@@ -231,7 +231,7 @@ const FavoritesScreen = () => (
       <View style={styles.footerItemContainer}>
         <TouchableOpacity style={styles.footerItem}>
           <Image
-            source={require("../dataicon/chat.png")}
+            source={require("../Image/dataicon/chat.png")}
             style={styles.footerIcon}
           />
           <Text style={styles.textFooter}>Inbox</Text>
@@ -240,7 +240,7 @@ const FavoritesScreen = () => (
       <View style={styles.footerItemContainer}>
         <TouchableOpacity style={styles.footerItem}>
           <Image
-            source={require("../dataicon/usericon.png")}
+            source={require("../Image/dataicon/usericon.png")}
             style={styles.footerIcon}
           />
           <Text style={styles.textFooter}>Profile</Text>

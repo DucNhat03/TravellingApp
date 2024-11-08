@@ -14,7 +14,7 @@ const ConfirmAndPayScreen = () => {
           <Text>Balian treehouse</Text>
           <Text style={styles.rating}>⭐ 5.0 (262)</Text>
         </View>
-        <Image source={require('../homescreen/ApartmentinOmaha.png')} style={styles.thumbnail} />
+        <Image source={require('../Image/homescreen/ApartmentinOmaha.png')} style={styles.thumbnail} />
       </View>
 
       {/* Trip Details */}
