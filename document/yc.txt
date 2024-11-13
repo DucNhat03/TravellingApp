@@ -1,0 +1,4 @@
+-- Phân quyền ( Role )
+-- OTP số điện thoại
+-- Đăng ký, đăng nhập ( đăng ký nhập SDT -> password -> Vô chỉnh sửa ....
+-- Sản phẩm (Chưa chọn, đã chọn, chưa thanh toán, đã thanh toán)

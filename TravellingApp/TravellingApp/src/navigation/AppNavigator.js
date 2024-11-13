@@ -26,7 +26,7 @@ const Stack = createStackNavigator();
 
 const AppNavigator = () => (
   <NavigationContainer>
-    <Stack.Navigator initialRouteName="Introduce">
+    <Stack.Navigator initialRouteName="FilterScreen">
       <Stack.Screen
         name="Introduce"
         component={IntroduceScreen}

@@ -21,6 +21,14 @@ const FavoritesScreen = ({ route, navigation }) => {
   const handleProductDetail = (product) => {
     navigation.navigate("DetailScreen", { product });
   };
+  {/* Hàm để xóa tất cả yêu thích */}
+  const handleClearFavorites = () => {
+    route.params.setFavorites([]);
+    navigation.navigate("Home");
+  };
+
+  
+  
 
 
   return (
@@ -37,7 +45,11 @@ const FavoritesScreen = ({ route, navigation }) => {
               />
             </TouchableOpacity>
             <Text style={styles.textHeader}>Favorites</Text>
-            <TouchableOpacity>
+            <TouchableOpacity 
+            onPress={() => {
+                  handleClearFavorites();
+                }}  
+              >
               <Image
                 source={require("../Image/dataicon/more.png")}
                 style={styles.moreIcon}
@@ -88,7 +100,9 @@ const FavoritesScreen = ({ route, navigation }) => {
     <View style={styles.footerItemContainer}>
       <TouchableOpacity
         style={styles.footerItem}
-        onPress={() => setSelectedFooter("Search")}
+        onPress={() => {
+          navigation.navigate("Home", { selectedFooter: "Search" }); // Gửi tham số về HomeScreen
+        }}
       >
         <Image
           source={require("../Image/dataicon/search.png")}

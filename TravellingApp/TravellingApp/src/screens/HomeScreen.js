@@ -114,7 +114,12 @@ const HomeScreen = ({ route, navigation }) => {
 
   const categories = ["Beach", "Mountain", "Camping"];
 
-  
+  {/* Set selected khi nhận param tu Favorite Screen */}
+  useEffect(() => {
+    if (route.params?.selectedFooter) {
+      setSelectedFooter(route.params.selectedFooter);
+    }
+  }, [route.params?.selectedFooter]);
 
   useEffect(() => {
     const selectedCategory = categories[selectedNav];
@@ -131,7 +136,10 @@ const HomeScreen = ({ route, navigation }) => {
   };
 
   const handleFavorite = () => {
-    navigation.navigate("Favorites", { favorites });
+    navigation.navigate("Favorites", {
+      favorites,
+      setFavorites, // setFavorites để cập nhật từ FavoritesScreen
+    });
   };
 
   const handleProfile = () => {
@@ -251,7 +259,10 @@ const HomeScreen = ({ route, navigation }) => {
           <View style={styles.footerItemContainer}>
             <TouchableOpacity
               style={styles.footerItem}
-              onPress={() => setSelectedFooter("Search")}
+              onPress={() => {
+                navigation.navigate("HomeScreen");
+                setSelectedFooter("Search");
+              }}
             >
               <Image
                 source={require("../Image/dataicon/search.png")}
