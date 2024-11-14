@@ -13,13 +13,16 @@ import {
 } from "react-native";
 import { launchImageLibrary } from "react-native-image-picker"; // Thêm thư viện chọn ảnh
 
-export default function RegisterAccount({ navigation }) {
+export default function RegisterAccount({ navigation, route   }) {
   const [isChecked, setIsChecked] = useState(false); // Checkbox đồng ý
   const [isChecked2, setIsChecked2] = useState(false); // Hiển thị mật khẩu
   const [username, setUsername] = useState(""); // Lưu username
   const [email, setEmail] = useState(""); // Lưu email
   const [password, setPassword] = useState(""); // Lưu password
   const [avatar, setAvatar] = useState(null); // Lưu ảnh đại diện
+
+  const { phoneNumber, countryCode } = route.params;
+
 
   const [errors, setErrors] = useState({
     username: false,
@@ -29,38 +32,26 @@ export default function RegisterAccount({ navigation }) {
   });
 
   const handleContinue = async () => {
-    const formData = new FormData();
-    formData.append("username", username);
-    formData.append("email", email);
-    formData.append("password", password);
-
-    // Luôn sử dụng ảnh mặc định là 'image3.jpg'
-    formData.append("avatar", {
-      uri: "image3.jpg", // Ảnh mặc định
-      type: "image/jpeg", // Kiểu ảnh mặc định
-      name: "image3.jpg", // Tên file ảnh mặc định
-    });
-
     try {
-      const response = await axios.post(
-        "http://localhost:3000/register",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-
+      const response = await axios.post('http://localhost:3000/register', {
+        phone_number: phoneNumber,
+        country_code: countryCode,
+        username,
+        email,
+        password,
+        avatar: avatar?.uri, // Chuỗi base64
+      });
       if (response.status === 201) {
-        Alert.alert("Thông báo", "Đăng ký thành công!");
-        navigation.navigate("Login2");
+        Alert.alert('Success', 'Registration completed!');
+        navigation.navigate('Login2');
       }
     } catch (error) {
-      console.error("Lỗi:", error);
-      Alert.alert("Lỗi", "Có lỗi xảy ra khi đăng ký.");
+      console.error('Error:', error.response?.data || error.message);
+      Alert.alert('Error', 'Failed to register user.');
     }
   };
+  
+
 
   const selectImage = () => {
     launchImageLibrary(
@@ -96,7 +87,7 @@ export default function RegisterAccount({ navigation }) {
         <View style={{ width: "100%" }}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <Image
-              source={require("../Image/login/back.png")}
+            source={require("../Image/dataicon/backicon.png")}
               style={{
                 marginLeft: 20,
                 marginTop: 20,
@@ -122,14 +113,14 @@ export default function RegisterAccount({ navigation }) {
             {/* Phần hiển thị hình ảnh và tiêu đề */}
             <View style={{ alignItems: "center", marginTop: 30 }}>
               <Image
-                source={require("../Image/login/logoo.png")}
-                style={{ width: 70, height: 70, borderRadius: 100 }}
+                source={require("../Image/login/register.png")}
+                style={{ width: 120, height: 90, borderRadius: 10 }}
                 resizeMode="cover"
               />
             </View>
             <View style={{ alignItems: "center" }}>
               <Text style={{ fontSize: 30, fontWeight: "bold" }}>
-                Nice to see you! !
+                Nice to see you!!
               </Text>
               <Text style={{ fontSize: 15, opacity: 0.6 }}>
                 Create your account
@@ -264,7 +255,7 @@ export default function RegisterAccount({ navigation }) {
             </View>
 
             {/* Thêm mục upload ảnh dưới các ô nhập */}
-            <View style={{ alignItems: "center", marginTop: 20 }}>
+            <View style={{ alignItems: "center", marginTop: 20 }}> 
               {avatar ? (
                 <Image
                   source={{ uri: avatar.uri }}
@@ -272,7 +263,7 @@ export default function RegisterAccount({ navigation }) {
                 />
               ) : (
                 <Image
-                  source={require("../Image/login/homeicon.png")}
+                  source={require("../Image/login/upload.png")}
                   style={{ width: 50, height: 50, borderRadius: 50 }}
                 />
               )}

@@ -11,6 +11,7 @@ const HomeScreen = ({ route, navigation }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [favorites, setFavorites] = useState([]);
   const [selectedFooter, setSelectedFooter] = useState("Search");
+  const [profileData, setProfileData] = useState(null);
 
   const data = [
     {
@@ -142,8 +143,18 @@ const HomeScreen = ({ route, navigation }) => {
     });
   };
 
+  useEffect(() => {
+    if (route.params?.profile) {
+      setProfileData(route.params.profile); // Lấy dữ liệu user từ Login
+    }
+  }, [route.params?.profile]);
+
   const handleProfile = () => {
-    navigation.navigate("ProfileScreen");
+    if (profileData) {
+      navigation.navigate("ProfileScreen", { userId: profileData.id });  // Truyền dữ liệu user đến ProfileScreen
+    } else {
+      Alert.alert("Error", "User data not found.");
+    }
   };
 
   const handleInbox = () => {

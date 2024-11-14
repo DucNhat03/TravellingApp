@@ -25,6 +25,8 @@ export default function Login({ navigation, route }) {
     invalidLogin: false,
   });
 
+
+
   // Lấy danh sách người dùng từ API khi component được mount
   useEffect(() => {
     axios
@@ -46,26 +48,25 @@ export default function Login({ navigation, route }) {
       invalidLogin: false,
     };
     setErrors(newErrors);
-
+  
     if (newErrors.email || newErrors.password) return;
-
+  
     const trimmedEmail = email.trim().toLowerCase();
     const trimmedPassword = password.trim();
-
-    // Kiểm tra xem người dùng có tồn tại trong danh sách không
-    const user = users.find(
-      (user) =>
-        user.email.trim().toLowerCase() === trimmedEmail &&
-        user.password.trim() === trimmedPassword
-    );
-
-    if (user) {
-      Alert.alert("Thông báo", "Đăng nhập thành công!");
-      navigation.navigate("Screen01"); // Điều hướng đến màn hình tiếp theo nếu đăng nhập thành công
-    } else {
-      setErrors((prevErrors) => ({ ...prevErrors, invalidLogin: true }));
-    }
+  
+    axios.post("http://localhost:3000/login", { email: trimmedEmail, password: trimmedPassword })
+      .then(response => {
+        const userData = response.data;
+        Alert.alert("Thông báo", "Đăng nhập thành công!");
+        navigation.navigate("Home", { profile: userData }); // Truyền dữ liệu user
+      })
+      .catch(error => {
+        setErrors(prevErrors => ({ ...prevErrors, invalidLogin: true }));
+        console.error("Login error:", error);
+      });
   };
+  
+  
 
   return (
     <SafeAreaView style={styles.container}>
@@ -73,7 +74,7 @@ export default function Login({ navigation, route }) {
       <View style={{ width: "100%"}}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Image
-            source={require("../Image/login/back.png")}
+          source={require("../Image/dataicon/backicon.png")}
             style={styles.backButton}
           />
         </TouchableOpacity>

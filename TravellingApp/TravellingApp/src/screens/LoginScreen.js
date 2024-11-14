@@ -13,17 +13,12 @@ import ModalDropdown from 'react-native-modal-dropdown';
 
 
 
+
 const LoginScreen = ({ navigation }) => {
   const [countryCode, setCountryCode] = useState('US');
   const [phoneNumber, setPhoneNumber] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
-  const navLogin = () => {
-    navigation.navigate('Login2');
-  };
-
-  const navRegister = () => {
-    navigation.navigate('RegisterAccount');
-  };
 
   const countries = [
     { label: 'USA', value: 'US', flag: require('../Image/flags/us.png'), code: '+1' },
@@ -33,6 +28,28 @@ const LoginScreen = ({ navigation }) => {
     { label: 'India', value: 'IN', flag: require('../Image/flags/in.png'), code: '+91' },
     { label: 'France', value: 'FR', flag: require('../Image/flags/fr.png'), code: '+33' },
   ];
+
+  const navLogin = () => {
+    navigation.navigate('Login2');
+  };
+
+
+  const isValidPhoneNumber = (phone) => {
+    const phoneRegex = /^[0-9]{9,15}$/; // Giới hạn từ 9-15 chữ số
+    return phoneRegex.test(phone);
+  };
+  
+  const handleContinue = () => {
+    if (!phoneNumber || !isValidPhoneNumber(phoneNumber)) {
+      setErrorMessage('Please enter a valid phone number.');
+    } else {
+      setErrorMessage('');
+      navigation.navigate('RegisterAccount', {
+        phoneNumber: phoneNumber,
+        countryCode: countryCode,
+      });
+    }
+  };
 
   const getPlaceholder = () => {
     const selectedCountry = countries.find((c) => c.value === countryCode);
@@ -74,7 +91,7 @@ const LoginScreen = ({ navigation }) => {
           />
         </View>
 
-        <Button title="Continue" buttonStyle={styles.continueButton} onPress={navRegister}/>
+        <Button title="Continue" buttonStyle={styles.continueButton} onPress={handleContinue} />
 
         <Text style={styles.orText}>or</Text>
 

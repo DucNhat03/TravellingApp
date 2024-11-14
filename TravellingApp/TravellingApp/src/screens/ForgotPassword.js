@@ -59,7 +59,7 @@ export default function ForgotPassword({ navigation }) {
       <View style={{ width: "100%" }}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Image
-            source={require("../Image/login/back.png")}
+            source={require("../Image/dataicon/backicon.png")}
             style={{ marginLeft: 20, marginTop: 20, width: 25, height: 25 }}
           />
         </TouchableOpacity>
