@@ -41,6 +41,9 @@ const DetailScreen = ({ route, navigation }) => {
   const handleDescription = () => {
     navigation.navigate("DescriptionScreen");
   };
+  const handlePoliciesDetail = () => {
+    navigation.navigate("PoliciesDetailScreen");
+  };
   return (
     <View style={{ height: "100vh", overflow: "auto" }}>
       <ScrollView style={{ overflow: "auto", flex: 1 }}>
@@ -141,7 +144,9 @@ const DetailScreen = ({ route, navigation }) => {
             It’s always a good idea to confirm the check-in policy directly with
             the owner/manager...
           </Text>
-          <TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {handlePoliciesDetail()}}
+          >
             <Text style={styles.viewMore}>View more</Text>
           </TouchableOpacity>
         </View>

@@ -21,6 +21,9 @@ import ForgotPassword from "../screens/ForgotPassword";
 import RegisterAccount from "../screens/RegisterAccountScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 import InboxScreen from "../screens/InboxScreen";
+import InboxDetailScreen from "../screens/InboxDetailScreen";
+import PoliciesDetailScreen from "../screens/PoliciesDetailScreen";
+import MapScreen from "../screens/MapScreen";
 
 const Stack = createStackNavigator();
 
@@ -53,8 +56,18 @@ const AppNavigator = () => (
         options={{ headerShown: false }}
       />
       <Stack.Screen
+        name="MapScreen"
+        component={MapScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
         name="InboxScreen"
         component={InboxScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="InboxDetailScreen"
+        component={InboxDetailScreen}
         options={{ headerShown: false }}
       />
       <Stack.Screen
@@ -95,6 +108,11 @@ const AppNavigator = () => (
       <Stack.Screen
         name="DescriptionScreen"
         component={DescriptionScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="PoliciesDetailScreen"
+        component={PoliciesDetailScreen}
         options={{ headerShown: false }}
       />
       <Stack.Screen

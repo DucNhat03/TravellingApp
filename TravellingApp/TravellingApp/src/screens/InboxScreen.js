@@ -1,5 +1,13 @@
 import React, { useState } from "react";
-import { TouchableOpacity, View, Text, Image, StyleSheet, ScrollView, SafeAreaView } from "react-native";
+import {
+  TouchableOpacity,
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  ScrollView,
+  SafeAreaView,
+} from "react-native";
 
 const InboxScreen = ({ navigation }) => {
   const [messages, setMessages] = useState([
@@ -10,6 +18,20 @@ const InboxScreen = ({ navigation }) => {
       message: "Hi, I have a question about my booking...",
       time: "10:30 AM",
       avatar: require("../Image/dataicon/homeicon.png"),
+      messagesHistory: [
+        {
+          id: 1,
+          sender: "John Doe",
+          message: "Hi, I have a question about my booking...",
+          time: "10:30 AM",
+        },
+        {
+          id: 2,
+          sender: "You",
+          message: "Sure, how can I help?",
+          time: "10:32 AM",
+        },
+      ],
     },
     {
       id: 2,
@@ -18,6 +40,14 @@ const InboxScreen = ({ navigation }) => {
       message: "Your payment has been received. Thank you!",
       time: "9:15 AM",
       avatar: require("../Image/dataicon/face.png"),
+      messagesHistory: [
+        {
+          id: 1,
+          sender: "Jane Smith",
+          message: "Your payment has been received. Thank you!",
+          time: "9:15 AM",
+        },
+      ],
     },
     {
       id: 3,
@@ -26,11 +56,45 @@ const InboxScreen = ({ navigation }) => {
       message: "We are here to help you with your stay.",
       time: "Yesterday",
       avatar: require("../Image/dataicon/google.png"),
+      messagesHistory: [
+        {
+          id: 1,
+          sender: "Host Support",
+          message: "We are here to help you with your stay.",
+          time: "Yesterday",
+        },
+      ],
     },
-    // Add more messages as needed
   ]);
 
+  const updateMessages = (id, newMessages) => {
+    setMessages((prevMessages) =>
+      prevMessages.map((msg) =>
+        msg.id === id ? { ...msg, messagesHistory: newMessages } : msg
+      )
+    );
+  };
+
+  const handleNavigateToDetail = (msg) => {
+    navigation.navigate("InboxDetailScreen", {
+      sender: msg.sender,
+      avatar: msg.avatar,
+      messagesHistory: msg.messagesHistory || [
+        {
+          id: msg.id,
+          sender: msg.sender,
+          message: msg.message,
+          time: msg.time,
+        },
+      ], // Đảm bảo có lịch sử tin nhắn
+      updateMessages: (newMessages) => updateMessages(msg.id, newMessages), // Truyền hàm để cập nhật tin nhắn
+    });
+  };
+
   const handleBack = () => {
+    if (route.params.updateMessages) {
+      route.params.updateMessages(messages); // Cập nhật lịch sử tin nhắn
+    }
     navigation.goBack();
   };
 
@@ -57,7 +121,19 @@ const InboxScreen = ({ navigation }) => {
         {/* Message List */}
         <ScrollView style={styles.scrollContainer}>
           {messages.map((msg) => (
-            <TouchableOpacity key={msg.id} style={styles.messageItem}>
+            <TouchableOpacity
+              key={msg.id}
+              style={styles.messageItem} // Dùng style cũ
+              onPress={() =>
+                navigation.navigate("InboxDetailScreen", {
+                  sender: msg.sender,
+                  avatar: msg.avatar,
+                  messagesHistory: msg.messagesHistory,
+                  updateMessages: (newMessages) =>
+                    updateMessages(msg.id, newMessages),
+                })
+              }
+            >
               <Image source={msg.avatar} style={styles.avatar} />
               <View style={styles.messageContent}>
                 <Text style={styles.sender}>{msg.sender}</Text>
@@ -106,7 +182,7 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
     resizeMode: "contain",
-    display: 'none',
+    display: "none",
   },
   messageItem: {
     flexDirection: "row",

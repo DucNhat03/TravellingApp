@@ -9,27 +9,52 @@ import {
   TextInput,
   SafeAreaView,
 } from "react-native";
+import Hoverable from "react-native-hoverable";
+import { useFocusEffect } from "@react-navigation/native";
 
 const FavoritesScreen = ({ route, navigation }) => {
-  const { favorites } = route.params; // Nhận danh sách yêu thích từ HomeScreen
+  const [favorites, setFavorites] = useState(route.params?.favorites || []);
   const [selectedFooter, setSelectedFooter] = useState("Favorites");
 
+  useFocusEffect(
+    React.useCallback(() => {
+      if (route.params?.favorites) {
+        setFavorites(route.params.favorites);
+      }
+    }, [route.params?.favorites])
+  );
+
   const handleGoBack = () => {
-    navigation.navigate("Home");
+    navigation.navigate("Home", { favorites });
   };
 
   const handleProductDetail = (product) => {
     navigation.navigate("DetailScreen", { product });
   };
-  {/* Hàm để xóa tất cả yêu thích */}
+  {
+    /* Hàm để xóa tất cả yêu thích */
+  }
   const handleClearFavorites = () => {
-    route.params.setFavorites([]);
-    navigation.navigate("Home");
+    setFavorites([]);
+    navigation.navigate("Home", { favorites: [] });
   };
 
-  
-  
+  const handleFavorite = () => {
+    setSelectedFooter("Favorites");
+    navigation.navigate("Favorites", {
+      favorites: route.params.favorites,
+    });
+  };
 
+  const handleInbox = () => {
+    setSelectedFooter("Inbox");
+    navigation.navigate("InboxScreen");
+  };
+
+  const handleProfile = () => {
+    setSelectedFooter("Profile");
+    navigation.navigate("ProfileScreen");
+  };
 
   return (
     <View style={{ height: "100vh", overflow: "auto" }}>
@@ -37,19 +62,22 @@ const FavoritesScreen = ({ route, navigation }) => {
         <ScrollView style={styles.scrollContainer}>
           {/* Header */}
           <View style={styles.header}>
-            <TouchableOpacity 
-                onPress={() => {handleGoBack()}}>
+            <TouchableOpacity
+              onPress={() => {
+                handleGoBack();
+              }}
+            >
               <Image
                 source={require("../Image/dataicon/backicon.png")}
                 style={styles.backIcon}
               />
             </TouchableOpacity>
             <Text style={styles.textHeader}>Favorites</Text>
-            <TouchableOpacity 
-            onPress={() => {
-                  handleClearFavorites();
-                }}  
-              >
+            <TouchableOpacity
+              onPress={() => {
+                handleClearFavorites();
+              }}
+            >
               <Image
                 source={require("../Image/dataicon/more.png")}
                 style={styles.moreIcon}
@@ -64,7 +92,11 @@ const FavoritesScreen = ({ route, navigation }) => {
 
           {/* Sản phẩm yêu thích */}
           {favorites.map((product) => (
-            <TouchableOpacity key={product.id} style={styles.product} onPress={() => handleProductDetail(product)}>
+            <TouchableOpacity
+              key={product.id}
+              style={styles.product}
+              onPress={() => handleProductDetail(product)}
+            >
               <Image source={product.image} style={styles.productImage} />
               <View style={styles.productLine1}>
                 <Text style={styles.titleProduct}>{product.name}</Text>
@@ -91,135 +123,74 @@ const FavoritesScreen = ({ route, navigation }) => {
               </View>
             </TouchableOpacity>
           ))}
-      
-      
-    </ScrollView>
-    
-    {/*Footer*/}
-    <View style={styles.footer}>
-    <View style={styles.footerItemContainer}>
-      <TouchableOpacity
-        style={styles.footerItem}
-        onPress={() => {
-          navigation.navigate("Home", { selectedFooter: "Search" }); // Gửi tham số về HomeScreen
-        }}
-      >
-        <Image
-          source={require("../Image/dataicon/search.png")}
-          style={[
-            styles.footerIcon,
-            selectedFooter === "Search" && styles.activeFooterIcon,
-          ]}
-        />
-        <Text
-          style={[
-            styles.textFooter,
-            selectedFooter === "Search" && styles.activeFooterText,
-          ]}
-        >
-          Search
-        </Text>
-      </TouchableOpacity>
-    </View>
-    <View style={styles.footerItemContainer}>
-      <TouchableOpacity
-        style={styles.footerItem}
-        onPress={() => {
-          setSelectedFooter("Favorites");
-          handleFavorite();
-        }}
-      >
-        <Image
-          source={require("../Image/homescreen/icon/favourite.png")}
-          style={[
-            styles.footerIcon,
-            selectedFooter === "Favorites" && styles.activeFooterIcon,
-          ]}
-        />
-        <Text
-          style={[
-            styles.textFooter,
-            selectedFooter === "Favorites" && styles.activeFooterText,
-          ]}
-        >
-          Favorites
-        </Text>
-      </TouchableOpacity>
-    </View>
-    <View style={styles.footerItemContainer}>
-      <TouchableOpacity
-        style={styles.footerItem}
-        onPress={() => setSelectedFooter("Bookings")}
-      >
-        <Image
-          source={require("../Image/homescreen/icon/application.png")}
-          style={[
-            styles.footerIcon,
-            selectedFooter === "Bookings" && styles.activeFooterIcon,
-          ]}
-        />
-        <Text
-          style={[
-            styles.textFooter,
-            selectedFooter === "Bookings" && styles.activeFooterText,
-          ]}
-        >
-          Bookings
-        </Text>
-      </TouchableOpacity>
-    </View>
-    <View style={styles.footerItemContainer}>
-      <TouchableOpacity
-        style={styles.footerItem}
-        onPress={() => setSelectedFooter("Inbox")}
-      >
-        <Image
-          source={require("../Image/dataicon/chat.png")}
-          style={[
-            styles.footerIcon,
-            selectedFooter === "Inbox" && styles.activeFooterIcon,
-          ]}
-        />
-        <Text
-          style={[
-            styles.textFooter,
-            selectedFooter === "Inbox" && styles.activeFooterText,
-          ]}
-        >
-          Inbox
-        </Text>
-      </TouchableOpacity>
-    </View>
-    <View style={styles.footerItemContainer}>
-      <TouchableOpacity
-        style={styles.footerItem}
-        onPress={() => {
-          setSelectedFooter("Profile");
-          handleProfile();
-        }}
-      >
-        <Image
-          source={require("../Image/dataicon/usericon.png")}
-          style={[
-            styles.footerIcon,
-            selectedFooter === "Profile" && styles.activeFooterIcon,
-          ]}
-        />
-        <Text
-          style={[
-            styles.textFooter,
-            selectedFooter === "Profile" && styles.activeFooterText,
-          ]}
-        >
-          Profile
-        </Text>
-      </TouchableOpacity>
-    </View>
-  </View>
-  </SafeAreaView>
+        </ScrollView>
 
-  </View>
-);
+        {/*Footer*/}
+        <View style={styles.footer}>
+          {[
+            {
+              label: "Search",
+              icon: require("../Image/dataicon/search.png"),
+              action: () => navigation.navigate("HomeScreen"),
+            },
+            {
+              label: "Favorites",
+              icon: require("../Image/homescreen/icon/favourite.png"),
+              action: handleFavorite,
+            },
+            {
+              label: "Bookings",
+              icon: require("../Image/homescreen/icon/application.png"),
+              action: () => setSelectedFooter("Bookings"),
+            },
+            {
+              label: "Inbox",
+              icon: require("../Image/dataicon/chat.png"),
+              action: handleInbox,
+            },
+            {
+              label: "Profile",
+              icon: require("../Image/dataicon/usericon.png"),
+              action: handleProfile,
+            },
+          ].map((item, index) => (
+            <Hoverable
+              key={index}
+              onHoverIn={() => setSelectedFooter(item.label)}
+            >
+              {(isHovered) => (
+                <View style={styles.footerItemContainer}>
+                  <TouchableOpacity
+                    style={styles.footerItem}
+                    onPress={item.action}
+                  >
+                    <Image
+                      source={item.icon}
+                      style={[
+                        styles.footerIcon,
+                        selectedFooter === item.label &&
+                          styles.activeFooterIcon, // Chỉ xét selectedFooter
+                      ]}
+                    />
+                    <Text
+                      style={[
+                        styles.textFooter,
+                        selectedFooter === item.label
+                          ? styles.activeFooterText
+                          : styles.textFooter,
+                      ]}
+                    >
+                      {item.label}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              )}
+            </Hoverable>
+          ))}
+        </View>
+      </SafeAreaView>
+    </View>
+  );
 };
 const styles = StyleSheet.create({
   container: {
@@ -332,6 +303,7 @@ const styles = StyleSheet.create({
     position: "fixed",
     bottom: 0,
     zIndex: 100,
+    paddingHorizontal: 8,
   },
   footerItem: {
     width: 40,
@@ -369,7 +341,8 @@ const styles = StyleSheet.create({
 });
 export default FavoritesScreen;
 
-{/*
+{
+  /*
   Phần này là phần icon yêu thích ở mỗi sản phẩm
   <TouchableOpacity style={styles.productImageContainer}>
                 <View
@@ -393,4 +366,5 @@ export default FavoritesScreen;
                 </View>
               </TouchableOpacity>
   
-*/}
+*/
+}
