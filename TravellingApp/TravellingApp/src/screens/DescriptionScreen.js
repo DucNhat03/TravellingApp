@@ -1,33 +1,61 @@
-import React from 'react';
-import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import React from "react";
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+} from "react-native";
 
 const DescriptionScreen = ({ navigation }) => (
   <ScrollView style={styles.container}>
     {/* Header */}
     <View style={styles.header}>
-      <TouchableOpacity 
-        onPress={() => {navigation.goBack()}}>
-        <Image source={require('../Image/descriptionscreen/backicon.png')} style={styles.icon} />
+      <TouchableOpacity
+        onPress={() => {
+          navigation.goBack();
+        }}
+      >
+        <Image
+          source={require("../Image/descriptionscreen/backicon.png")}
+          style={styles.icon}
+        />
       </TouchableOpacity>
       <Text style={styles.headerTitle}>Description</Text>
     </View>
 
     {/* Image */}
-    <Image source={require('../Image/descriptionscreen/resort.png')} style={styles.image} />
+    <Image
+      source={require("../Image/descriptionscreen/resort.png")}
+      style={styles.image}
+    />
 
     {/* Description Text */}
     <Text style={styles.descriptionText}>
-      Looking for the perfect place to relax and unwind? This stunning Balinese villa is the ultimate tropical getaway. 
-      Located on a quiet street just minutes from the beach, this beautiful home offers everything you need for a luxurious and comfortable stay.
+      Looking for the perfect place to relax and unwind? This stunning Balinese
+      villa is the ultimate tropical getaway. Located on a quiet street just
+      minutes from the beach, this beautiful home offers everything you need for
+      a luxurious and comfortable stay.
     </Text>
 
     {/* Location */}
     <View style={styles.locationContainer}>
-      <View style={{flexDirection: 'row'}}>
-        <Image source={require('../Image/descriptionscreen/location.png')} style={styles.locationIcon} />
+      <View style={{ flexDirection: "row" }}>
+        <Image
+          source={require("../Image/descriptionscreen/location.png")}
+          style={styles.locationIcon}
+        />
         <Text style={styles.locationText}>Bali, Indonesia</Text>
       </View>
-      <TouchableOpacity>
+      <TouchableOpacity
+        onPress={() =>
+          navigation.navigate("MapScreen", {
+            location: { latitude: -8.409518, longitude: 115.188919 }, // Vị trí Bali
+            title: "Bali, Indonesia",
+          })
+        }
+      >
         <Text style={styles.openMap}>Open map</Text>
       </TouchableOpacity>
     </View>
@@ -35,16 +63,29 @@ const DescriptionScreen = ({ navigation }) => (
     {/* Features List */}
     <View style={styles.featuresContainer}>
       <View style={styles.featureItem}>
-        <Image source={require('../Image/descriptionscreen/check.png')} style={styles.checkIcon} />
+        <Image
+          source={require("../Image/descriptionscreen/check.png")}
+          style={styles.checkIcon}
+        />
         <Text style={styles.featureText}>Consectetur magna consectetur</Text>
       </View>
       <View style={styles.featureItem}>
-        <Image source={require('../Image/descriptionscreen/check.png')} style={styles.checkIcon} />
-        <Text style={styles.featureText}>Voluptate magna fugiat tempor incididunt</Text>
+        <Image
+          source={require("../Image/descriptionscreen/check.png")}
+          style={styles.checkIcon}
+        />
+        <Text style={styles.featureText}>
+          Voluptate magna fugiat tempor incididunt
+        </Text>
       </View>
       <View style={styles.featureItem}>
-        <Image source={require('../Image/descriptionscreen/check.png')} style={styles.checkIcon} />
-        <Text style={styles.featureText}>Aliqua in in mollit laboris tempor in ut incididunt</Text>
+        <Image
+          source={require("../Image/descriptionscreen/check.png")}
+          style={styles.checkIcon}
+        />
+        <Text style={styles.featureText}>
+          Aliqua in in mollit laboris tempor in ut incididunt
+        </Text>
       </View>
     </View>
   </ScrollView>
@@ -53,77 +94,77 @@ const DescriptionScreen = ({ navigation }) => (
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     padding: 16,
   },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 16,
   },
   icon: {
     width: 20,
     height: 20,
-    resizeMode: 'contain',
+    resizeMode: "contain",
   },
   headerTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
-    marginLeft: '30%',
+    fontWeight: "bold",
+    marginLeft: "30%",
   },
   image: {
-    width: '100%',
+    width: "100%",
     height: 200,
     borderRadius: 8,
-    resizeMode: 'cover',
+    resizeMode: "cover",
     marginBottom: 16,
   },
   descriptionText: {
     fontSize: 14,
-    color: '#333',
+    color: "#333",
     marginBottom: 16,
   },
   locationContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 16,
-    justifyContent: 'space-between',
+    justifyContent: "space-between",
   },
   locationIcon: {
     width: 16,
     height: 16,
-    resizeMode: 'contain',
+    resizeMode: "contain",
     marginRight: 8,
   },
   locationText: {
     fontSize: 14,
-    color: '#333',
+    color: "#333",
     marginRight: 8,
   },
   openMap: {
     fontSize: 14,
-    color: '#1e90ff',
-    fontWeight: 'bold',
-    textDecorationLine: 'underline',
+    color: "#1e90ff",
+    fontWeight: "bold",
+    textDecorationLine: "underline",
     marginRight: 8,
   },
   featuresContainer: {
     marginTop: 16,
   },
   featureItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 8,
   },
   checkIcon: {
     width: 16,
     height: 16,
-    resizeMode: 'contain',
+    resizeMode: "contain",
     marginRight: 8,
   },
   featureText: {
     fontSize: 14,
-    color: '#333',
+    color: "#333",
   },
 });
 
