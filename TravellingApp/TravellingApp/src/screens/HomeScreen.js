@@ -3,7 +3,7 @@ import { TouchableOpacity } from "react-native";
 import { View, Text, Image, StyleSheet } from "react-native";
 import { ScrollView, TextInput } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-web";
-import { useFocusEffect } from "@react-navigation/native"; 
+import Hoverable from "react-native-hoverable";
 
 const HomeScreen = ({ route, navigation }) => {
   const [selectedNav, setSelectedNav] = useState(0); // 0: mặc định mục đầu tiên được chọn
@@ -115,7 +115,16 @@ const HomeScreen = ({ route, navigation }) => {
 
   const categories = ["Beach", "Mountain", "Camping"];
 
-  {/* Set selected khi nhận param tu Favorite Screen */}
+  {
+    /* Set setFavorites khi nhận param tu Favorite Screen */
+  }
+
+  useEffect(() => {
+    if (route.params?.favorites) {
+      setFavorites(route.params.favorites);
+    }
+  }, [route.params?.favorites]);
+
   useEffect(() => {
     if (route.params?.selectedFooter) {
       setSelectedFooter(route.params.selectedFooter);
@@ -151,23 +160,34 @@ const HomeScreen = ({ route, navigation }) => {
 
   const handleProfile = () => {
     if (profileData) {
-      navigation.navigate("ProfileScreen", { userId: profileData.id });  // Truyền dữ liệu user đến ProfileScreen
+      navigation.navigate("ProfileScreen", { userId: profileData.id }); // Truyền dữ liệu user đến ProfileScreen
     } else {
       Alert.alert("Error", "User data not found.");
     }
   };
 
+  {
+    /*Move inbox screen */
+  }
   const handleInbox = () => {
     navigation.navigate("InboxScreen");
   };
 
+  {
+    /*Hàm xử lý yêu thích khi nhấn vào biểu tượng trái tim   */
+  }
   const toggleFavorite = (product) => {
     setFavorites((prevFavorites) => {
-      if (prevFavorites.find((item) => item.id === product.id)) {
-        return prevFavorites.filter((item) => item.id !== product.id); // Xóa khỏi danh sách
-      } else {
-        return [...prevFavorites, product]; // Thêm vào danh sách
-      }
+      const updatedFavorites = prevFavorites.find(
+        (item) => item.id === product.id
+      )
+        ? prevFavorites.filter((item) => item.id !== product.id)
+        : [...prevFavorites, product];
+
+      // Gửi dữ liệu qua route params mà không điều hướng
+      navigation.setParams({ favorites: updatedFavorites });
+
+      return updatedFavorites;
     });
   };
 
@@ -267,125 +287,66 @@ const HomeScreen = ({ route, navigation }) => {
         </ScrollView>
         {/*Footer*/}
         <View style={styles.footer}>
-          <View style={styles.footerItemContainer}>
-            <TouchableOpacity
-              style={styles.footerItem}
-              onPress={() => {
-                navigation.navigate("HomeScreen");
-                setSelectedFooter("Search");
-              }}
+          {[
+            {
+              label: "Search",
+              icon: require("../Image/dataicon/search.png"),
+              action: () => navigation.navigate("HomeScreen"),
+            },
+            {
+              label: "Favorites",
+              icon: require("../Image/homescreen/icon/favourite.png"),
+              action: handleFavorite,
+            },
+            {
+              label: "Bookings",
+              icon: require("../Image/homescreen/icon/application.png"),
+              action: () => setSelectedFooter("Bookings"),
+            },
+            {
+              label: "Inbox",
+              icon: require("../Image/dataicon/chat.png"),
+              action: handleInbox,
+            },
+            {
+              label: "Profile",
+              icon: require("../Image/dataicon/usericon.png"),
+              action: handleProfile,
+            },
+          ].map((item, index) => (
+            <Hoverable
+              key={index}
+              onPointerDown={() => setSelectedFooter(item.label)} // Chỉ highlight khi click
             >
-              <Image
-                source={require("../Image/dataicon/search.png")}
-                style={[
-                  styles.footerIcon,
-                  selectedFooter === "Search" && styles.activeFooterIcon,
-                ]}
-              />
-              <Text
-                style={[
-                  styles.textFooter,
-                  selectedFooter === "Search" && styles.activeFooterText,
-                ]}
-              >
-                Search
-              </Text>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.footerItemContainer}>
-            <TouchableOpacity
-              style={styles.footerItem}
-              onPress={() => {
-                setSelectedFooter("Favorites");
-                handleFavorite();
-              }}
-            >
-              <Image
-                source={require("../Image/homescreen/icon/favourite.png")}
-                style={[
-                  styles.footerIcon,
-                  selectedFooter === "Favorites" && styles.activeFooterIcon,
-                ]}
-              />
-              <Text
-                style={[
-                  styles.textFooter,
-                  selectedFooter === "Favorites" && styles.activeFooterText,
-                ]}
-              >
-                Favorites
-              </Text>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.footerItemContainer}>
-            <TouchableOpacity
-              style={styles.footerItem}
-              onPress={() => setSelectedFooter("Bookings")}
-            >
-              <Image
-                source={require("../Image/homescreen/icon/application.png")}
-                style={[
-                  styles.footerIcon,
-                  selectedFooter === "Bookings" && styles.activeFooterIcon,
-                ]}
-              />
-              <Text
-                style={[
-                  styles.textFooter,
-                  selectedFooter === "Bookings" && styles.activeFooterText,
-                ]}
-              >
-                Bookings
-              </Text>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.footerItemContainer}>
-            <TouchableOpacity
-              style={styles.footerItem} 
-              onPress={() => {setSelectedFooter("Inbox"), handleInbox()}}
-            >
-              <Image
-                source={require("../Image/dataicon/chat.png")}
-                style={[
-                  styles.footerIcon,
-                  selectedFooter === "Inbox" && styles.activeFooterIcon,
-                ]}
-              />
-              <Text
-                style={[
-                  styles.textFooter,
-                  selectedFooter === "Inbox" && styles.activeFooterText,
-                ]}
-              >
-                Inbox
-              </Text>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.footerItemContainer}>
-            <TouchableOpacity
-              style={styles.footerItem}
-              onPress={() => {
-                setSelectedFooter("Profile");
-                handleProfile();
-              }}
-            >
-              <Image
-                source={require("../Image/dataicon/usericon.png")}
-                style={[
-                  styles.footerIcon,
-                  selectedFooter === "Profile" && styles.activeFooterIcon,
-                ]}
-              />
-              <Text
-                style={[
-                  styles.textFooter,
-                  selectedFooter === "Profile" && styles.activeFooterText,
-                ]}
-              >
-                Profile
-              </Text>
-            </TouchableOpacity>
-          </View>
+              {(isHovered) => (
+                <View style={styles.footerItemContainer}>
+                  <TouchableOpacity
+                    style={styles.footerItem}
+                    onPress={item.action}
+                  >
+                    <Image
+                      source={item.icon}
+                      style={[
+                        styles.footerIcon,
+                        selectedFooter === item.label &&
+                          styles.activeFooterIcon, // Chỉ xét selectedFooter
+                      ]}
+                    />
+                    <Text
+                      style={[
+                        styles.textFooter,
+                        selectedFooter === item.label
+                          ? styles.activeFooterText
+                          : styles.textFooter,
+                      ]}
+                    >
+                      {item.label}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              )}
+            </Hoverable>
+          ))}
         </View>
       </SafeAreaView>
     </View>
@@ -535,6 +496,7 @@ const styles = StyleSheet.create({
     position: "fixed",
     bottom: 0,
     zIndex: 100,
+    paddingHorizontal: 8,
   },
   footerItem: {
     width: 40,
