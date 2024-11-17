@@ -12,7 +12,6 @@ import {
 } from "react-native";
 
 export default function Login({ navigation, route }) {
-  // Lấy mảng userData từ Screen_03 được truyền qua navigation
 
   const [users, setUsers] = useState([]);
   const [email, setEmail] = useState("");
