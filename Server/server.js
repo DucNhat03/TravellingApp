@@ -155,9 +155,8 @@ app.post(
   }
 );
 // profile 
-// API to get user by ID
 app.get('/users/:userId', (req, res) => {
-  const userId = req.params.userId; // Get userId from the URL parameter
+  const userId = req.params.userId;
   const query = 'SELECT * FROM users WHERE id = ?';
 
   db.query(query, [userId], (err, results) => {
@@ -168,8 +167,27 @@ app.get('/users/:userId', (req, res) => {
     if (results.length === 0) {
       return res.status(404).json({ error: 'User not found' });
     }
-    res.json(results[0]); // Return the user data
+    res.json(results[0]);
   });
+});
+
+// update user
+app.put('/users/:id', (req, res) => {
+  const userId = req.params.id;
+  const { username, email, phone_number, country_code, avatar_url } = req.body;
+  const sql = `UPDATE users SET username = ?, email = ?, phone_number = ?, country_code = ?, avatar_url = ? WHERE id = ?`;
+
+  db.query(
+    sql,
+    [username, email, phone_number, country_code, avatar_url, userId],
+    (err, result) => {
+      if (err) {
+        console.error('Database Error:', err);
+        return res.status(500).json({ error: 'Database error' });
+      }
+      res.status(200).json({ message: 'Profile updated successfully' });
+    }
+  );
 });
 
 
@@ -179,6 +197,207 @@ app.delete('/deleteAccount', (req, res) => {
   db.query('DELETE FROM users WHERE id = ?', [userId], (err, result) => {
     if (err) return res.status(500).json({ error: 'Database error' });
     res.json({ message: 'Account deleted successfully' });
+  });
+});
+
+//add product
+app.post('/products', (req, res) => {
+  const { name, category, price, rating, image_url, description } = req.body;
+
+  const sql = `INSERT INTO products (name, category, price, rating, image_url, description) 
+               VALUES (?, ?, ?, ?, ?, ?)`;
+
+  db.query(sql, [name, category, price, rating, image_url, description], (err, result) => {
+    if (err) {
+      console.error('Database Error:', err.message);
+      return res.status(500).json({ error: 'Database error' });
+    }
+    res.status(201).json({ message: 'Product added successfully', productId: result.insertId });
+  });
+});
+//get product
+app.get('/products', (req, res) => {
+  const sql = 'SELECT * FROM products';
+
+  db.query(sql, (err, results) => {
+    if (err) {
+      console.error('Database Error:', err.message);
+      return res.status(500).json({ error: 'Database error' });
+    }
+    res.status(200).json(results);
+  });
+});
+//update product
+app.put('/products/:id', (req, res) => {
+  const productId = req.params.id;
+  const { name, category, price, rating, image_url, description } = req.body;
+
+  const sql = `UPDATE products SET name = ?, category = ?, price = ?, rating = ?, image_url = ?, description = ?, updated_at = NOW()
+               WHERE id = ?`;
+
+  db.query(sql, [name, category, price, rating, image_url, description, productId], (err, result) => {
+    if (err) {
+      console.error('Database Error:', err.message);
+      return res.status(500).json({ error: 'Database error' });
+    }
+    res.status(200).json({ message: 'Product updated successfully' });
+  });
+});
+
+//delete product
+app.delete('/products/:id', (req, res) => {
+  const productId = req.params.id;
+
+  const sql = 'DELETE FROM products WHERE id = ?';
+
+  db.query(sql, [productId], (err, result) => {
+    if (err) {
+      console.error('Database Error:', err.message);
+      return res.status(500).json({ error: 'Database error' });
+    }
+    res.status(200).json({ message: 'Product deleted successfully' });
+  });
+});
+// API thêm tin nhắn mới vào `message_histories`
+app.post('/messages', (req, res) => {
+  const { conversation_id, sender, message } = req.body;
+  const time = new Date(); // Lấy thời gian hiện tại
+
+  const sql = `
+    INSERT INTO message_histories (message_id, sender, message, time) 
+    VALUES (?, ?, ?, ?)
+  `;
+
+  db.query(sql, [conversation_id, sender, message, time], (err, result) => {
+    if (err) {
+      console.error('Database Error:', err.message);
+      return res.status(500).json({ error: 'Database error' });
+    }
+
+    // Cập nhật thông tin tin nhắn mới nhất trong bảng messages
+    const updateSql = `
+      UPDATE messages 
+      SET latest_message = ?, latest_time = ? 
+      WHERE id = ?
+    `;
+    db.query(updateSql, [message, time, conversation_id], (updateErr) => {
+      if (updateErr) {
+        console.error('Database Update Error:', updateErr.message);
+        return res.status(500).json({ error: 'Database update error' });
+      }
+      res.status(201).json({ message: 'Message sent successfully' });
+    });
+  });
+});
+
+// get messages
+app.get('/messages', (req, res) => {
+  const sql = 'SELECT * FROM messages';
+
+  db.query(sql, (err, results) => {
+    if (err) {
+      console.error('Database Error:', err.message);
+      return res.status(500).json({ error: 'Database error' });
+    }
+
+    res.status(200).json(results);
+  });
+});
+// getlịch sử tin nhắn của một cuộc hội thoại
+app.get('/messages/:id/history', (req, res) => {
+  const messageId = req.params.id;
+
+  const sql = 'SELECT * FROM message_histories WHERE message_id = ?';
+
+  db.query(sql, [messageId], (err, results) => {
+    if (err) {
+      console.error('Database Error:', err.message);
+      return res.status(500).json({ error: 'Database error' });
+    }
+
+    res.status(200).json(results);
+  });
+});
+
+// xoa 
+app.delete('/messages/:id', (req, res) => {
+  const messageId = req.params.id;
+
+  const sql = 'DELETE FROM messages WHERE id = ?';
+
+  db.query(sql, [messageId], (err, result) => {
+    if (err) {
+      console.error('Database Error:', err.message);
+      return res.status(500).json({ error: 'Database error' });
+    }
+
+    res.status(200).json({ message: 'Conversation deleted successfully' });
+  });
+});
+
+//API cho danh sách hội thoại
+app.get('/conversations', (req, res) => {
+  const sql = `
+    SELECT 
+      m.id, 
+      m.sender_name, 
+      m.subject, 
+      m.latest_message, 
+      m.latest_time, 
+      m.avatar_url 
+    FROM messages m
+    ORDER BY m.latest_time DESC
+  `;
+
+  db.query(sql, (err, results) => {
+    if (err) {
+      console.error('Database Error:', err.message);
+      return res.status(500).json({ error: 'Database error' });
+    }
+    res.status(200).json(results);
+  });
+});
+//API chi tiết hội thoại
+app.get('/conversations/:id', (req, res) => {
+  const conversationId = req.params.id;
+
+  const sql = `
+    SELECT 
+      mh.id, 
+      mh.sender, 
+      mh.message, 
+      mh.time 
+    FROM message_histories mh
+    WHERE mh.message_id = ?
+    ORDER BY mh.time ASC
+  `;
+
+  db.query(sql, [conversationId], (err, results) => {
+    if (err) {
+      console.error('Database Error:', err.message);
+      return res.status(500).json({ error: 'Database error' });
+    }
+    res.status(200).json(results);
+  });
+});
+
+
+//get booking
+app.get('/bookings', (req, res) => {
+  const sql = `
+    SELECT b.*, u.username AS user_name, p.name AS product_name 
+    FROM bookings b
+    JOIN users u ON b.user_id = u.id
+    JOIN products p ON b.product_id = p.id
+    ORDER BY b.created_at DESC
+  `;
+
+  db.query(sql, (err, results) => {
+    if (err) {
+      console.error('Database Error:', err.message);
+      return res.status(500).json({ error: 'Database error' });
+    }
+    res.status(200).json(results);
   });
 });
 
