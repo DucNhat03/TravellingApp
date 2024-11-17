@@ -1,8 +1,12 @@
 import React, { useState } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 
-const ConfirmAndPayScreen = () => {
+const ConfirmAndPayScreen = ({navigation}) => {
   const [selectedPaymentOption, setSelectedPaymentOption] = useState('full');
+
+  const handlePaymentSuccess = () => {
+    navigation.navigate("PaymentSuccessScreen");
+  }
 
   return (
     <View style={{ height: '100vh', overflow: 'auto' }}>
@@ -81,7 +85,9 @@ const ConfirmAndPayScreen = () => {
       </View>
 
       {/* Book Now Button */}
-      <TouchableOpacity style={styles.bookButton}>
+      <TouchableOpacity style={styles.bookButton}
+        onPress={handlePaymentSuccess}
+      >
         <Text style={styles.bookButtonText}>Book now</Text>
       </TouchableOpacity>
     </ScrollView>
