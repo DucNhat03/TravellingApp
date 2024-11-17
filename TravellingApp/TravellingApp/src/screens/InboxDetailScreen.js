@@ -9,78 +9,103 @@ import {
   TextInput,
   SafeAreaView,
 } from "react-native";
-import Hoverable from "react-native-hoverable";
 
 const InboxDetailScreen = ({ route, navigation }) => {
-  const { sender, avatar, messagesHistory, updateMessages } = route.params;
+  const { sender, avatar, conversationId } = route.params;
   const [inputMessage, setInputMessage] = useState("");
-  const [messages, setMessages] = useState(messagesHistory || []);
+  const [messages, setMessages] = useState([]);
 
-  const handleBack = () => {
-    updateMessages(messages); // Cập nhật tin nhắn mới về màn hình cha
-    navigation.goBack();
+  useEffect(() => {
+    fetchMessages();
+  }, []);
+
+  const fetchMessages = async () => {
+    try {
+      const response = await fetch(`http://localhost:3000/conversations/${conversationId}`);
+      const data = await response.json();
+      setMessages(data);
+    } catch (error) {
+      console.error("Error fetching messages:", error);
+    }
   };
+  
 
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
     if (inputMessage.trim() === "") return;
-
-    setMessages((prevMessages) => [
-      ...prevMessages,
-      { id: Date.now(), sender: "You", message: inputMessage, time: "Now" },
-    ]);
-    setInputMessage("");
+  
+    const newMessage = {
+      sender: "You",
+      message: inputMessage,
+      conversation_id: conversationId,
+    };
+  
+    try {
+      const response = await fetch("http://localhost:3000/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newMessage),
+      });
+  
+      if (response.ok) {
+        fetchMessages(); // Làm mới danh sách tin nhắn
+        setInputMessage("");
+      } else {
+        console.error("Failed to send message");
+      }
+    } catch (error) {
+      console.error("Error sending message:", error);
+    }
   };
+  
 
   return (
-    <View style={{ height: "100vh", overflow: "auto" }}>
-      {/* Các thành phần khác */}
-      <SafeAreaView style={styles.container}>
-        <View style={styles.header}>
-          <TouchableOpacity onPress={handleBack}>
-            <Image
-              source={require("../Image/dataicon/backicon.png")}
-              style={styles.backIcon}
-            />
-          </TouchableOpacity>
-          <Text style={styles.textHeader}>{sender}</Text>
-          <Image source={avatar} style={styles.avatarHeader} />
-        </View>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Image
+            source={require("../Image/dataicon/backicon.png")}
+            style={styles.backIcon}
+          />
+        </TouchableOpacity>
+        <Text style={styles.textHeader}>{sender}</Text>
+        <Image source={{ uri: avatar }} style={styles.avatarHeader} />
+      </View>
 
-        {/* Nội dung khác */}
-        <ScrollView style={styles.messageContainer}>
-          {messages.map((msg) => (
-            <View
-              key={msg.id}
-              style={[
-                styles.messageBubble,
-                msg.sender === "You" ? styles.outgoing : styles.incoming,
-              ]}
-            >
-              <Text style={styles.messageText}>{msg.message}</Text>
+      <ScrollView style={styles.messageContainer}>
+        {messages.map((msg, index) => (
+          <View
+            key={index}
+            style={[
+              styles.messageWrapper,
+              msg.sender === "You" ? styles.outgoingWrapper : styles.incomingWrapper,
+            ]}
+          >
+            <View style={styles.messageBubble}>
+              <Text>{msg.message}</Text>
               <Text style={styles.messageTime}>{msg.time}</Text>
             </View>
-          ))}
-        </ScrollView>
+          </View>
+        ))}
+      </ScrollView>
 
-        {/* Input */}
-        <View style={styles.inputContainer}>
-          <TextInput
-            placeholder="Type your message..."
-            style={styles.input}
-            value={inputMessage}
-            onChangeText={setInputMessage}
+      <View style={styles.inputContainer}>
+        <TextInput
+          placeholder="Type your message..."
+          style={styles.input}
+          value={inputMessage}
+          onChangeText={setInputMessage}
+        />
+        <TouchableOpacity onPress={handleSendMessage}>
+          <Image
+            source={require("../Image/dataicon/sendicon.png")}
+            style={styles.sendIcon}
           />
-          <TouchableOpacity onPress={handleSendMessage}>
-            <Image
-              source={require("../Image/dataicon/sendicon.png")}
-              style={styles.sendIcon}
-            />
-          </TouchableOpacity>
-        </View>
-      </SafeAreaView>
-    </View>
+        </TouchableOpacity>
+      </View>
+    </SafeAreaView>
   );
 };
+
 
 const styles = StyleSheet.create({
   container: {
@@ -114,25 +139,30 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 10,
   },
-  messageBubble: {
-    padding: 10,
-    borderRadius: 10,
+  messageWrapper: {
     marginVertical: 5,
   },
-  incoming: {
-    alignSelf: "flex-start",
-    backgroundColor: "#f0f0f0",
+  outgoingWrapper: {
+    alignItems: "flex-end",
   },
-  outgoing: {
-    alignSelf: "flex-end",
-    backgroundColor: "#d1edc1",
+  incomingWrapper: {
+    alignItems: "flex-start",
+  },
+  messageBubble: {
+    maxWidth: "80%",
+    padding: 10,
+    borderRadius: 10,
   },
   messageText: {
     fontSize: 16,
+    color: "#000",
+  },
+  outgoingText: {
+    color: "#fff", // Màu chữ cho tin nhắn gửi đi
   },
   messageTime: {
     fontSize: 12,
-    color: "#888",
+    color: "#bbb",
     marginTop: 5,
     alignSelf: "flex-end",
   },
@@ -158,77 +188,6 @@ const styles = StyleSheet.create({
     height: 24,
     resizeMode: "contain",
   },
-  footer: {
-    flexDirection: "row",
-    height: 60,
-    backgroundColor: "#f8f8f8",
-    justifyContent: "space-around",
-    alignItems: "center",
-  },
-  footerItemContainer: {
-    alignItems: "center",
-  },
-  footerItem: {
-    alignItems: "center",
-  },
-  footerIcon: {
-    width: 24,
-    height: 24,
-    resizeMode: "contain",
-  },
-  textFooter: {
-    fontSize: 12,
-  },
 });
 
 export default InboxDetailScreen;
-
-{
-  /*
-Footer 
-<View style={styles.footer}>
-{[
-  {
-    label: "Search",
-    icon: require("../Image/dataicon/search.png"),
-    action: () => navigation.navigate("HomeScreen"),
-  },
-  {
-    label: "Favorites",
-    icon: require("../Image/homescreen/icon/favourite.png"),
-    action: () => navigation.navigate("Favorites"),
-  },
-  {
-    label: "Bookings",
-    icon: require("../Image/homescreen/icon/application.png"),
-    action: () => navigation.navigate("BookingsScreen"),
-  },
-  {
-    label: "Inbox",
-    icon: require("../Image/dataicon/chat.png"),
-    action: () => navigation.navigate("InboxScreen"),
-  },
-  {
-    label: "Profile",
-    icon: require("../Image/dataicon/usericon.png"),
-    action: () => navigation.navigate("ProfileScreen"),
-  },
-].map((item, index) => (
-  <Hoverable
-    key={index}
-    onHoverIn={() => {}}
-  >
-    <View style={styles.footerItemContainer}>
-      <TouchableOpacity style={styles.footerItem} onPress={item.action}>
-        <Image
-          source={item.icon}
-          style={styles.footerIcon}
-        />
-        <Text style={styles.textFooter}>{item.label}</Text>
-      </TouchableOpacity>
-    </View>
-  </Hoverable>
-))}
-</View>    
-*/
-}
