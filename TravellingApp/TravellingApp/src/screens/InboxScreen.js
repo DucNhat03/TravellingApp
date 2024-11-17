@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   TouchableOpacity,
   View,
@@ -10,144 +10,66 @@ import {
 } from "react-native";
 
 const InboxScreen = ({ navigation }) => {
-  const [messages, setMessages] = useState([
-    {
-      id: 1,
-      sender: "John Doe",
-      subject: "Booking Inquiry",
-      message: "Hi, I have a question about my booking...",
-      time: "10:30 AM",
-      avatar: require("../Image/dataicon/homeicon.png"),
-      messagesHistory: [
-        {
-          id: 1,
-          sender: "John Doe",
-          message: "Hi, I have a question about my booking...",
-          time: "10:30 AM",
-        },
-        {
-          id: 2,
-          sender: "You",
-          message: "Sure, how can I help?",
-          time: "10:32 AM",
-        },
-      ],
-    },
-    {
-      id: 2,
-      sender: "Jane Smith",
-      subject: "Payment Confirmation",
-      message: "Your payment has been received. Thank you!",
-      time: "9:15 AM",
-      avatar: require("../Image/dataicon/face.png"),
-      messagesHistory: [
-        {
-          id: 1,
-          sender: "Jane Smith",
-          message: "Your payment has been received. Thank you!",
-          time: "9:15 AM",
-        },
-      ],
-    },
-    {
-      id: 3,
-      sender: "Host Support",
-      subject: "Welcome to our service",
-      message: "We are here to help you with your stay.",
-      time: "Yesterday",
-      avatar: require("../Image/dataicon/google.png"),
-      messagesHistory: [
-        {
-          id: 1,
-          sender: "Host Support",
-          message: "We are here to help you with your stay.",
-          time: "Yesterday",
-        },
-      ],
-    },
-  ]);
+  const [messages, setMessages] = useState([]);
 
-  const updateMessages = (id, newMessages) => {
-    setMessages((prevMessages) =>
-      prevMessages.map((msg) =>
-        msg.id === id ? { ...msg, messagesHistory: newMessages } : msg
-      )
-    );
-  };
+  useEffect(() => {
+    fetchConversations();
+  }, []);
 
-  const handleNavigateToDetail = (msg) => {
-    navigation.navigate("InboxDetailScreen", {
-      sender: msg.sender,
-      avatar: msg.avatar,
-      messagesHistory: msg.messagesHistory || [
-        {
-          id: msg.id,
-          sender: msg.sender,
-          message: msg.message,
-          time: msg.time,
-        },
-      ], // Đảm bảo có lịch sử tin nhắn
-      updateMessages: (newMessages) => updateMessages(msg.id, newMessages), // Truyền hàm để cập nhật tin nhắn
-    });
-  };
-
-  const handleBack = () => {
-    if (route.params.updateMessages) {
-      route.params.updateMessages(messages); // Cập nhật lịch sử tin nhắn
+  const fetchConversations = async () => {
+    try {
+      const response = await fetch("http://localhost:3000/conversations");
+      if (!response.ok) {
+        throw new Error("Failed to fetch conversations");
+      }
+      const data = await response.json();
+      setMessages(data);
+    } catch (error) {
+      console.error("Error fetching conversations:", error);
     }
-    navigation.goBack();
   };
+  
 
   return (
-    <View style={{ height: "100vh", overflow: "auto" }}>
-      <SafeAreaView style={styles.container}>
-        {/* Header */}
-        <View style={styles.header}>
-          <TouchableOpacity onPress={handleBack}>
-            <Image
-              source={require("../Image/dataicon/backicon.png")}
-              style={styles.backIcon}
-            />
-          </TouchableOpacity>
-          <Text style={styles.textHeader}>Inbox</Text>
-          <TouchableOpacity>
-            <Image
-              source={require("../Image/dataicon/backicon.png")}
-              style={styles.moreIcon}
-            />
-          </TouchableOpacity>
-        </View>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Image
+            source={require("../Image/dataicon/backicon.png")}
+            style={styles.backIcon}
+          />
+        </TouchableOpacity>
+        <Text style={styles.textHeader}>Inbox</Text>
+      </View>
 
-        {/* Message List */}
-        <ScrollView style={styles.scrollContainer}>
-          {messages.map((msg) => (
-            <TouchableOpacity
-              key={msg.id}
-              style={styles.messageItem} // Dùng style cũ
-              onPress={() =>
-                navigation.navigate("InboxDetailScreen", {
-                  sender: msg.sender,
-                  avatar: msg.avatar,
-                  messagesHistory: msg.messagesHistory,
-                  updateMessages: (newMessages) =>
-                    updateMessages(msg.id, newMessages),
-                })
-              }
-            >
-              <Image source={msg.avatar} style={styles.avatar} />
-              <View style={styles.messageContent}>
-                <Text style={styles.sender}>{msg.sender}</Text>
-                <Text style={styles.subject}>{msg.subject}</Text>
-                <Text style={styles.preview}>{msg.message}</Text>
-              </View>
-              <Text style={styles.time}>{msg.time}</Text>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
-      </SafeAreaView>
-    </View>
+
+      <ScrollView style={styles.scrollContainer}>
+        {messages.map((msg) => (
+          <TouchableOpacity
+            key={msg.id}
+            style={styles.messageItem}
+            onPress={() =>
+              navigation.navigate("InboxDetailScreen", {
+                sender: msg.sender_name,
+                avatar: msg.avatar_url,
+                conversationId: msg.id,
+              })
+            }
+          >
+            <Image source={{ uri: msg.avatar_url }} style={styles.avatar} />
+            <View style={styles.messageContent}>
+              <Text style={styles.sender}>{msg.sender_name}</Text>
+              <Text style={styles.subject}>{msg.subject}</Text>
+              <Text style={styles.preview}>{msg.latest_message}</Text>
+            </View>
+            <Text style={styles.time}>{msg.latest_time}</Text>
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
+    </SafeAreaView>
   );
 };
+
 
 const styles = StyleSheet.create({
   container: {
@@ -165,13 +87,14 @@ const styles = StyleSheet.create({
     width: "95%",
     height: 80,
     flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
     marginLeft: 10,
+    textAlign: "center",
   },
   textHeader: {
     fontSize: 20,
     fontWeight: "500",
+    marginLeft: '40%',
   },
   backIcon: {
     width: 20,
