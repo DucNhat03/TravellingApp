@@ -1,145 +1,59 @@
 import React, { useState, useEffect } from "react";
-import { TouchableOpacity } from "react-native";
-import { View, Text, Image, StyleSheet } from "react-native";
+import { TouchableOpacity, View, Text, Image, StyleSheet, Alert } from "react-native";
 import { ScrollView, TextInput } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-web";
 import Hoverable from "react-native-hoverable";
+import { useFocusEffect } from "@react-navigation/native";
 
 const HomeScreen = ({ route, navigation }) => {
   const [selectedNav, setSelectedNav] = useState(0); // 0: mặc định mục đầu tiên được chọn
+  const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [favorites, setFavorites] = useState([]);
   const [selectedFooter, setSelectedFooter] = useState("Search");
   const [profileData, setProfileData] = useState(null);
-
-  const data = [
-    {
-      id: 1,
-      name: "Apartment Luxury 1",
-      category: "Beach",
-      price: 28,
-      rating: 5.0,
-      image: require("../Image/homescreen/ApartmentinOmaha.png"),
-    },
-    {
-      id: 2,
-      name: "Mountain Luxury 1",
-      category: "Mountain",
-      price: 35,
-      rating: 4.8,
-      image: require("../Image/homescreen/Mountain.png"),
-    },
-    {
-      id: 3,
-      name: "Camping Tent",
-      category: "Camping",
-      price: 15,
-      rating: 4.5,
-      image: require("../Image/homescreen/camping.png"),
-    },
-    {
-      id: 4,
-      name: "Apartment View Beaches",
-      category: "Beach",
-      price: 28,
-      rating: 5.0,
-      image: require("../Image/homescreen/Beach.png"),
-    },
-    {
-      id: 5,
-      name: "Mountain Luxury 2",
-      category: "Mountain",
-      price: 35,
-      rating: 4.8,
-      image: require("../Image/homescreen/Mountain.png"),
-    },
-    {
-      id: 6,
-      name: "Camping Tent 2",
-      category: "Camping",
-      price: 15,
-      rating: 4.5,
-      image: require("../Image/homescreen/camping.png"),
-    },
-    {
-      id: 7,
-      name: "Apartment Luxury View Beaches",
-      category: "Beach",
-      price: 28,
-      rating: 5.0,
-      image: require("../Image/homescreen/ApartmentinOmaha.png"),
-    },
-    {
-      id: 8,
-      name: "Mountain Luxury 3",
-      category: "Mountain",
-      price: 35,
-      rating: 4.8,
-      image: require("../Image/homescreen/Mountain.png"),
-    },
-    {
-      id: 9,
-      name: "Camping Luxury 3",
-      category: "Camping",
-      price: 15,
-      rating: 4.5,
-      image: require("../Image/homescreen/camping.png"),
-    },
-    {
-      id: 10,
-      name: "Apartment Luxury 2",
-      category: "Beach",
-      price: 28,
-      rating: 5.0,
-      image: require("../Image/homescreen/Beach.png"),
-    },
-    {
-      id: 11,
-      name: "Mountain Luxury 4",
-      category: "Mountain",
-      price: 35,
-      rating: 4.8,
-      image: require("../Image/homescreen/Mountain.png"),
-    },
-    {
-      id: 12,
-      name: "Camping Tent 4",
-      category: "Camping",
-      price: 15,
-      rating: 4.5,
-      image: require("../Image/homescreen/camping.png"),
-    },
-    // Thêm sản phẩm khác nếu cần
-  ];
+  const [messages, setMessages] = useState([]);
 
   const categories = ["Beach", "Mountain", "Camping"];
 
-  {
-    /* Set setFavorites khi nhận param tu Favorite Screen */
+  //nhan du lieu user
+  useEffect(() => {
+  if (route.params?.profile) {
+    console.log("Received profile in HomeScreen:", route.params.profile);
+    setProfileData(route.params.profile.user); // Lưu user vào profileData
+  } else {
+    console.log("No profile data received");
   }
+  fetchProducts();
+}, [route.params?.profile]);
+  
+
 
   useEffect(() => {
-    if (route.params?.favorites) {
-      setFavorites(route.params.favorites);
-    }
-  }, [route.params?.favorites]);
-
-  useEffect(() => {
-    if (route.params?.selectedFooter) {
-      setSelectedFooter(route.params.selectedFooter);
-    }
-  }, [route.params?.selectedFooter]);
+    fetchProducts();
+  }, []);
 
   useEffect(() => {
     const selectedCategory = categories[selectedNav];
-    const filtered = data.filter(
+    const filtered = products.filter(
       (item) =>
         item.category === selectedCategory &&
         item.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
     setFilteredProducts(filtered);
-  }, [selectedNav, searchQuery]);
+  }, [selectedNav, searchQuery, products]);
+
+  const fetchProducts = async () => {
+    try {
+      const response = await fetch("http://localhost:3000/products");
+      if (!response.ok) throw new Error("Failed to fetch products");
+      const data = await response.json();
+      setProducts(data);
+    } catch (error) {
+      Alert.alert("Error", error.message);
+    }
+  };
 
   const handleProductDetail = (product) => {
     navigation.navigate("DetailScreen", { product });
@@ -148,45 +62,40 @@ const HomeScreen = ({ route, navigation }) => {
   const handleFavorite = () => {
     navigation.navigate("Favorites", {
       favorites,
-      setFavorites, // setFavorites để cập nhật từ FavoritesScreen
+      setFavorites,
     });
   };
 
-  useEffect(() => {
-    if (route.params?.profile) {
-      setProfileData(route.params.profile); // Lấy dữ liệu user từ Login
-    }
-  }, [route.params?.profile]);
+
 
   const handleProfile = () => {
-    if (profileData) {
-      navigation.navigate("ProfileScreen", { userId: profileData.id }); // Truyền dữ liệu user đến ProfileScreen
-    } else {
-      Alert.alert("Error", "User data not found.");
-    }
+      console.log("Navigating to ProfileScreen with userId:", profileData.id); // Log để kiểm tra
+      navigation.navigate("ProfileScreen", { userId: profileData.id });
+    
   };
+  
 
-  {
-    /*Move inbox screen */
-  }
+  useFocusEffect(
+    React.useCallback(() => {
+      if (route.params?.updatedMessages) {
+        setMessages(route.params.updatedMessages);
+      }
+    }, [route.params?.updatedMessages])
+  );
+
   const handleInbox = () => {
-    navigation.navigate("InboxScreen");
+    navigation.navigate("InboxScreen", {
+      messages,
+      setMessages,
+    });
   };
 
-  {
-    /*Hàm xử lý yêu thích khi nhấn vào biểu tượng trái tim   */
-  }
   const toggleFavorite = (product) => {
     setFavorites((prevFavorites) => {
-      const updatedFavorites = prevFavorites.find(
-        (item) => item.id === product.id
-      )
+      const updatedFavorites = prevFavorites.find((item) => item.id === product.id)
         ? prevFavorites.filter((item) => item.id !== product.id)
         : [...prevFavorites, product];
-
-      // Gửi dữ liệu qua route params mà không điều hướng
       navigation.setParams({ favorites: updatedFavorites });
-
       return updatedFavorites;
     });
   };
@@ -195,13 +104,9 @@ const HomeScreen = ({ route, navigation }) => {
     <View style={{ height: "100vh", overflow: "auto" }}>
       <SafeAreaView style={styles.container}>
         <ScrollView style={styles.ScrollViewContainer}>
-          {/* Search */}
           <View style={styles.search}>
             <TouchableOpacity>
-              <Image
-                source={require("../Image/dataicon/search.png")}
-                style={styles.searchIcon}
-              />
+              <Image source={require("../Image/dataicon/search.png")} style={styles.searchIcon} />
             </TouchableOpacity>
             <TextInput
               placeholder="Where do you want stay?"
@@ -210,15 +115,11 @@ const HomeScreen = ({ route, navigation }) => {
               onChangeText={(text) => setSearchQuery(text)}
             />
           </View>
-          {/*Navigation*/}
           <View style={styles.navigation}>
             {categories.map((category, index) => (
               <View
                 key={index}
-                style={[
-                  styles.navItem,
-                  selectedNav === index && styles.activeNav,
-                ]}
+                style={[styles.navItem, selectedNav === index && styles.activeNav]}
               >
                 <TouchableOpacity
                   style={styles.navButtonContainer}
@@ -240,17 +141,14 @@ const HomeScreen = ({ route, navigation }) => {
             ))}
           </View>
 
-          {/*Products*/}
           {filteredProducts.map((product) => (
             <View style={styles.product} key={product.id}>
               <TouchableOpacity
                 style={styles.productImageContainer}
                 onPress={() => handleProductDetail(product)}
               >
-                <Image source={product.image} style={styles.productImage} />
+                <Image source={{ uri: product.image_url }} style={styles.productImage} />
               </TouchableOpacity>
-
-              {/* Icon yêu thích */}
               <TouchableOpacity
                 style={styles.favoriteIcon}
                 onPress={() => toggleFavorite(product)}
@@ -258,13 +156,12 @@ const HomeScreen = ({ route, navigation }) => {
                 <Image
                   source={
                     favorites.find((item) => item.id === product.id)
-                      ? require("../Image/homescreen/icon/heart_filled.png") // Trái tim đầy (màu đỏ)
-                      : require("../Image/homescreen/icon/heart_outline.png") // Trái tim rỗng (màu trắng)
+                      ? require("../Image/homescreen/icon/heart_filled.png")
+                      : require("../Image/homescreen/icon/heart_outline.png")
                   }
                   style={styles.heartIcon}
                 />
               </TouchableOpacity>
-
               <View style={styles.productLine1}>
                 <Text style={styles.titleProduct}>{product.name}</Text>
                 <View style={styles.rate}>
@@ -285,7 +182,6 @@ const HomeScreen = ({ route, navigation }) => {
             </View>
           ))}
         </ScrollView>
-        {/*Footer*/}
         <View style={styles.footer}>
           {[
             {
@@ -316,35 +212,29 @@ const HomeScreen = ({ route, navigation }) => {
           ].map((item, index) => (
             <Hoverable
               key={index}
-              onPointerDown={() => setSelectedFooter(item.label)} // Chỉ highlight khi click
+              onPointerDown={() => setSelectedFooter(item.label)}
             >
-              {(isHovered) => (
-                <View style={styles.footerItemContainer}>
-                  <TouchableOpacity
-                    style={styles.footerItem}
-                    onPress={item.action}
+              <View style={styles.footerItemContainer}>
+                <TouchableOpacity style={styles.footerItem} onPress={item.action}>
+                  <Image
+                    source={item.icon}
+                    style={[
+                      styles.footerIcon,
+                      selectedFooter === item.label && styles.activeFooterIcon,
+                    ]}
+                  />
+                  <Text
+                    style={[
+                      styles.textFooter,
+                      selectedFooter === item.label
+                        ? styles.activeFooterText
+                        : styles.textFooter,
+                    ]}
                   >
-                    <Image
-                      source={item.icon}
-                      style={[
-                        styles.footerIcon,
-                        selectedFooter === item.label &&
-                          styles.activeFooterIcon, // Chỉ xét selectedFooter
-                      ]}
-                    />
-                    <Text
-                      style={[
-                        styles.textFooter,
-                        selectedFooter === item.label
-                          ? styles.activeFooterText
-                          : styles.textFooter,
-                      ]}
-                    >
-                      {item.label}
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-              )}
+                    {item.label}
+                  </Text>
+                </TouchableOpacity>
+              </View>
             </Hoverable>
           ))}
         </View>
