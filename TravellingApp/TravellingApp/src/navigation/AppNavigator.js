@@ -5,7 +5,7 @@ import HomeScreen from "../screens/HomeScreen";
 import LoginScreen from "../screens/LoginScreen";
 import FavoritesScreen from "../screens/FavoriteScreen";
 import SearchScreen from "../screens/SearchScreen";
-import NotificationScreen from "../screens/NotificationScreen";
+import BookingScreen from "../screens/BookingScreen";
 import DetailsScreen from "../screens/DetailsScreen";
 import ReviewsScreen from "../screens/ReviewScreen";
 import DescriptionScreen from "../screens/DescriptionScreen";
@@ -23,7 +23,7 @@ import ProfileScreen from "../screens/ProfileScreen";
 import InboxScreen from "../screens/InboxScreen";
 import InboxDetailScreen from "../screens/InboxDetailScreen";
 import PoliciesDetailScreen from "../screens/PoliciesDetailScreen";
-import MapScreen from "../screens/MapScreen";
+
 
 const Stack = createStackNavigator();
 
@@ -53,11 +53,6 @@ const AppNavigator = () => (
       <Stack.Screen
         name="RegisterAccount"
         component={RegisterAccount}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name="MapScreen"
-        component={MapScreen}
         options={{ headerShown: false }}
       />
       <Stack.Screen
@@ -91,8 +86,8 @@ const AppNavigator = () => (
         options={{ headerShown: false }}
       />
       <Stack.Screen
-        name="Notification"
-        component={NotificationScreen}
+        name="BookingScreen"
+        component={BookingScreen}
         options={{ headerShown: false }}
       />
       <Stack.Screen

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { TouchableOpacity } from "react-native";
 import {
+  TouchableOpacity,
   View,
   Text,
   Image,
@@ -8,6 +8,7 @@ import {
   ScrollView,
   TextInput,
   SafeAreaView,
+  Alert,
 } from "react-native";
 import Hoverable from "react-native-hoverable";
 import { useFocusEffect } from "@react-navigation/native";
@@ -31,9 +32,7 @@ const FavoritesScreen = ({ route, navigation }) => {
   const handleProductDetail = (product) => {
     navigation.navigate("DetailScreen", { product });
   };
-  {
-    /* Hàm để xóa tất cả yêu thích */
-  }
+
   const handleClearFavorites = () => {
     setFavorites([]);
     navigation.navigate("Home", { favorites: [] });
@@ -42,7 +41,7 @@ const FavoritesScreen = ({ route, navigation }) => {
   const handleFavorite = () => {
     setSelectedFooter("Favorites");
     navigation.navigate("Favorites", {
-      favorites: route.params.favorites,
+      favorites,
     });
   };
 
@@ -62,24 +61,16 @@ const FavoritesScreen = ({ route, navigation }) => {
         <ScrollView style={styles.scrollContainer}>
           {/* Header */}
           <View style={styles.header}>
-            <TouchableOpacity
-              onPress={() => {
-                handleGoBack();
-              }}
-            >
+            <TouchableOpacity onPress={handleGoBack}>
               <Image
                 source={require("../Image/dataicon/backicon.png")}
                 style={styles.backIcon}
               />
             </TouchableOpacity>
             <Text style={styles.textHeader}>Favorites</Text>
-            <TouchableOpacity
-              onPress={() => {
-                handleClearFavorites();
-              }}
-            >
+            <TouchableOpacity onPress={handleClearFavorites}>
               <Image
-                source={require("../Image/dataicon/more.png")}
+                source={require("../Image/dataicon/clear.png")}
                 style={styles.moreIcon}
               />
             </TouchableOpacity>
@@ -91,41 +82,42 @@ const FavoritesScreen = ({ route, navigation }) => {
           </View>
 
           {/* Sản phẩm yêu thích */}
-          {favorites.map((product) => (
-            <TouchableOpacity
-              key={product.id}
-              style={styles.product}
-              onPress={() => handleProductDetail(product)}
-            >
-              <Image source={product.image} style={styles.productImage} />
-              <View style={styles.productLine1}>
-                <Text style={styles.titleProduct}>{product.name}</Text>
-                <View style={styles.rate}>
-                  <Image
-                    source={require("../Image/homescreen/icon/star.png")}
-                    style={styles.starIcon}
-                  />
-                  <Text style={styles.textRate}>{product.rating}</Text>
+          {favorites.length > 0 ? (
+            favorites.map((product) => (
+              <TouchableOpacity
+                key={product.id}
+                style={styles.product}
+                onPress={() => handleProductDetail(product)}
+              >
+                <Image
+                  source={{ uri: product.image_url }}
+                  style={styles.productImage}
+                />
+                <View style={styles.productLine1}>
+                  <Text style={styles.titleProduct}>{product.name}</Text>
+                  <View style={styles.rate}>
+                    <Image
+                      source={require("../Image/homescreen/icon/star.png")}
+                      style={styles.starIcon}
+                    />
+                    <Text style={styles.textRate}>{product.rating}</Text>
+                  </View>
                 </View>
-              </View>
-              <View style={styles.productLine2}>
-                <View style={{ flexDirection: "row" }}>
-                  <Image
-                    source={require("../Image/dataicon/singlebed.png")}
-                    style={styles.bedIcon}
-                  />
-                  <Text style={styles.type}>1 bedroom</Text>
+                <View style={styles.productLine2}>
+                  <Text style={styles.type}>{product.category}</Text>
+                  <View style={styles.rate}>
+                    <Text style={styles.textPrice}>${product.price}</Text>
+                    <Text style={styles.textRate}>/night</Text>
+                  </View>
                 </View>
-                <View style={styles.rate}>
-                  <Text style={styles.textPrice}>${product.price}</Text>
-                  <Text style={styles.textRate}>/night</Text>
-                </View>
-              </View>
-            </TouchableOpacity>
-          ))}
+              </TouchableOpacity>
+            ))
+          ) : (
+            <Text style={styles.noFavoritesText}>No favorites added yet.</Text>
+          )}
         </ScrollView>
 
-        {/*Footer*/}
+        {/* Footer */}
         <View style={styles.footer}>
           {[
             {
@@ -154,37 +146,26 @@ const FavoritesScreen = ({ route, navigation }) => {
               action: handleProfile,
             },
           ].map((item, index) => (
-            <Hoverable
-              key={index}
-              onHoverIn={() => setSelectedFooter(item.label)}
-            >
-              {(isHovered) => (
-                <View style={styles.footerItemContainer}>
-                  <TouchableOpacity
-                    style={styles.footerItem}
-                    onPress={item.action}
+            <Hoverable key={index}>
+              <View style={styles.footerItemContainer}>
+                <TouchableOpacity style={styles.footerItem} onPress={item.action}>
+                  <Image
+                    source={item.icon}
+                    style={[
+                      styles.footerIcon,
+                      selectedFooter === item.label && styles.activeFooterIcon,
+                    ]}
+                  />
+                  <Text
+                    style={[
+                      styles.textFooter,
+                      selectedFooter === item.label && styles.activeFooterText,
+                    ]}
                   >
-                    <Image
-                      source={item.icon}
-                      style={[
-                        styles.footerIcon,
-                        selectedFooter === item.label &&
-                          styles.activeFooterIcon, // Chỉ xét selectedFooter
-                      ]}
-                    />
-                    <Text
-                      style={[
-                        styles.textFooter,
-                        selectedFooter === item.label
-                          ? styles.activeFooterText
-                          : styles.textFooter,
-                      ]}
-                    >
-                      {item.label}
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-              )}
+                    {item.label}
+                  </Text>
+                </TouchableOpacity>
+              </View>
             </Hoverable>
           ))}
         </View>
@@ -192,18 +173,14 @@ const FavoritesScreen = ({ route, navigation }) => {
     </View>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
-    width: "100%",
-    margin: 0,
-    padding: 0,
     flex: 1,
-    height: 700,
+    backgroundColor: "#fff",
   },
   scrollContainer: {
-    width: "100%",
     flex: 1,
-    height: 400,
     paddingBottom: 50,
   },
   header: {
@@ -224,43 +201,30 @@ const styles = StyleSheet.create({
     resizeMode: "contain",
   },
   moreIcon: {
-    width: 20,
-    height: 20,
+    width: 28,
+    height: 28,
     resizeMode: "contain",
   },
   navigation: {
-    width: "100%",
+    paddingHorizontal: 10,
     height: 50,
-    flexDirection: "row",
+    justifyContent: "center",
   },
   textNav: {
     fontSize: 24,
     fontWeight: "bold",
-    marginLeft: 10,
   },
   product: {
     width: "100%",
     height: 400,
-    justifyContent: "center",
     alignItems: "center",
-    borderColor: "#000",
     marginTop: 5,
   },
   productImage: {
     width: "95%",
     height: 300,
-    resizeMode: "stretch",
+    resizeMode: "cover",
     borderRadius: 10,
-  },
-  productImageContainer: {
-    width: "100%",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  starIcon: {
-    width: 18,
-    height: 18,
-    resizeMode: "contain",
   },
   productLine1: {
     flexDirection: "row",
@@ -293,16 +257,18 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "bold",
   },
+  noFavoritesText: {
+    textAlign: "center",
+    marginTop: 20,
+    fontSize: 16,
+    color: "#888",
+  },
   footer: {
     flexDirection: "row",
-    width: "100%",
     height: 60,
     alignItems: "center",
     justifyContent: "space-between",
     backgroundColor: "#F5F5F5",
-    position: "fixed",
-    bottom: 0,
-    zIndex: 100,
     paddingHorizontal: 8,
   },
   footerItem: {
@@ -315,7 +281,7 @@ const styles = StyleSheet.create({
     width: 27,
     height: 27,
     resizeMode: "contain",
-    tintColor: "#000", // Màu mặc định của icon
+    tintColor: "#000",
   },
   footerItemContainer: {
     flex: 1,
@@ -324,47 +290,14 @@ const styles = StyleSheet.create({
   },
   textFooter: {
     fontSize: 12,
-    color: "#000", // Màu mặc định của chữ
+    color: "#000",
   },
   activeFooterIcon: {
-    tintColor: "#00BFFF", // Màu xanh khi được chọn
+    tintColor: "#00BFFF",
   },
   activeFooterText: {
-    color: "#00BFFF", // Màu xanh khi được chọn
-  },
-  bedIcon: {
-    width: 20,
-    height: 20,
-    resizeMode: "contain",
-    opacity: 0.6,
+    color: "#00BFFF",
   },
 });
-export default FavoritesScreen;
 
-{
-  /*
-  Phần này là phần icon yêu thích ở mỗi sản phẩm
-  <TouchableOpacity style={styles.productImageContainer}>
-                <View
-                  style={{
-                    width: 35,
-                    height: 35,
-                    backgroundColor: "#fff",
-                    position: "absolute",
-                    zIndex: 1000,
-                    borderRadius: 50,
-                    alignItems: "center",
-                    justifyContent: "center",
-                    top: -290,
-                    right: 20,
-                  }}
-                >
-                  <Image
-                    source={require("../Image/homescreen/icon/favourite.png")}
-                    style={{ width: 25, height: 25, resizeMode: "contain" }}
-                  />
-                </View>
-              </TouchableOpacity>
-  
-*/
-}
+export default FavoritesScreen;

@@ -44,6 +44,9 @@ const DetailScreen = ({ route, navigation }) => {
   const handlePoliciesDetail = () => {
     navigation.navigate("PoliciesDetailScreen");
   };
+  const handleBookNow = () => {
+    navigation.navigate("ConfirmAndPayScreen");
+  };
   return (
     <View style={{ height: "100vh", overflow: "auto" }}>
       <ScrollView style={{ overflow: "auto", flex: 1 }}>
@@ -86,7 +89,7 @@ const DetailScreen = ({ route, navigation }) => {
             </TouchableOpacity>
           </View>
           <View style={styles.ratingContainer}>
-            <Text style={styles.rating}>⭐ 4.5/5</Text>
+            <Text style={styles.rating}>⭐ {product.rating}/5</Text>
             <Text style={styles.reviewCount}>262 reviews</Text>
           </View>
         </View>
@@ -113,7 +116,7 @@ const DetailScreen = ({ route, navigation }) => {
         <View style={styles.reviewsContainer}>
           <Text style={styles.sectionTitle}>Reviews</Text>
           <View style={styles.reviewSummary}>
-            <Text style={styles.rating}>4.5/5</Text>
+            <Text style={styles.rating}>{product.rating}/5</Text>
             <Text>262 reviews</Text>
           </View>
           <View style={styles.review}>
@@ -170,8 +173,10 @@ const DetailScreen = ({ route, navigation }) => {
 
         {/* Price and Book Now */}
         <View style={styles.footer}>
-          <Text style={styles.price}>From: $20/night</Text>
-          <TouchableOpacity style={styles.bookButton}>
+          <Text style={styles.price}>From: ${product.price}/night</Text>
+          <TouchableOpacity style={styles.bookButton}
+            onPress={() => {handleBookNow()}}
+          >
             <Text style={styles.bookButtonText}>Book now</Text>
           </TouchableOpacity>
         </View>
