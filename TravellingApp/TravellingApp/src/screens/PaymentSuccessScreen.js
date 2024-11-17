@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, Platform } from 'react-native';
 import html2pdf from 'html2pdf.js';
 
-const PaymentSuccessScreen = () => {
+const PaymentSuccessScreen = ({navigation}) => {
   const createPDF = () => {
     // Nội dung HTML cho PDF
     const content = `
@@ -73,7 +73,9 @@ const PaymentSuccessScreen = () => {
       </TouchableOpacity>
 
       {/* View Booking Button */}
-      <TouchableOpacity style={styles.viewBookingButton}>
+      <TouchableOpacity style={styles.viewBookingButton}
+        onPress={() => navigation.navigate('BookingScreen')}   
+      >
         <Text style={styles.viewBookingButtonText}>View booking</Text>
       </TouchableOpacity>
     </View>
