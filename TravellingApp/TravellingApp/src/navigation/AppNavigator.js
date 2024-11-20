@@ -23,6 +23,10 @@ import ProfileScreen from "../screens/ProfileScreen";
 import InboxScreen from "../screens/InboxScreen";
 import InboxDetailScreen from "../screens/InboxDetailScreen";
 import PoliciesDetailScreen from "../screens/PoliciesDetailScreen";
+import HomeAdmin from "../screens/HomeAdmin";
+import AdminProductManagement from "../screens/AdminProductManagement";
+import AdminUserManagement from "../screens/AdminUserManagement";
+import AdminFormModal from "../screens/AdminFormModal";
 
 
 const Stack = createStackNavigator();
@@ -33,6 +37,26 @@ const AppNavigator = () => (
       <Stack.Screen
         name="Introduce"
         component={IntroduceScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="AdminHome"
+        component={HomeAdmin}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="AdminProductManagement"
+        component={AdminProductManagement}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="AdminUserManagement"
+        component={AdminUserManagement}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="AdminFormModal"
+        component={AdminFormModal}
         options={{ headerShown: false }}
       />
       <Stack.Screen

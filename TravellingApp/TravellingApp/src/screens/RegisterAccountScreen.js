@@ -8,21 +8,22 @@ import {
   TouchableOpacity,
   TextInput,
   Image,
-  Alert,
+  Modal,
   ScrollView,
 } from "react-native";
-import { launchImageLibrary } from "react-native-image-picker"; // Thêm thư viện chọn ảnh
+import { launchImageLibrary } from "react-native-image-picker";
 
-export default function RegisterAccount({ navigation, route   }) {
+export default function RegisterAccount({ navigation, route }) {
   const [isChecked, setIsChecked] = useState(false); // Checkbox đồng ý
   const [isChecked2, setIsChecked2] = useState(false); // Hiển thị mật khẩu
   const [username, setUsername] = useState(""); // Lưu username
   const [email, setEmail] = useState(""); // Lưu email
   const [password, setPassword] = useState(""); // Lưu password
   const [avatar, setAvatar] = useState(null); // Lưu ảnh đại diện
+  const [modalVisible, setModalVisible] = useState(false); // Trạng thái Modal
+  const [modalMessage, setModalMessage] = useState(""); // Nội dung Modal
 
   const { phoneNumber, countryCode } = route.params;
-
 
   const [errors, setErrors] = useState({
     username: false,
@@ -32,8 +33,23 @@ export default function RegisterAccount({ navigation, route   }) {
   });
 
   const handleContinue = async () => {
+    const newErrors = {
+      username: username.trim() === "",
+      email: email.trim() === "",
+      password: password === "",
+      checkbox: !isChecked,
+    };
+
+    setErrors(newErrors);
+
+    if (Object.values(newErrors).includes(true)) {
+      setModalMessage("Please fill all the required fields.");
+      setModalVisible(true);
+      return;
+    }
+
     try {
-      const response = await axios.post('http://localhost:3000/register', {
+      const response = await axios.post("http://localhost:3000/register", {
         phone_number: phoneNumber,
         country_code: countryCode,
         username,
@@ -41,17 +57,22 @@ export default function RegisterAccount({ navigation, route   }) {
         password,
         avatar: avatar?.uri, // Chuỗi base64
       });
+
       if (response.status === 201) {
-        Alert.alert('Success', 'Registration completed!');
-        navigation.navigate('Login2');
+        setModalMessage("Registration completed successfully!");
+        setModalVisible(true);
+        setTimeout(() => {
+          setModalVisible(false);
+          navigation.navigate("Login2");
+        }, 1500);
       }
     } catch (error) {
-      console.error('Error:', error.response?.data || error.message);
-      Alert.alert('Error', 'Failed to register user.');
+      const errorMsg =
+        error.response?.data?.error || "Failed to register user.";
+      setModalMessage(errorMsg);
+      setModalVisible(true);
     }
   };
-  
-
 
   const selectImage = () => {
     launchImageLibrary(
@@ -83,11 +104,10 @@ export default function RegisterAccount({ navigation, route   }) {
           backgroundColor: "white",
         }}
       >
-        {/* Phần tiêu đề phía trên */}
         <View style={{ width: "100%" }}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <Image
-            source={require("../Image/dataicon/backicon.png")}
+              source={require("../Image/dataicon/backicon.png")}
               style={{
                 marginLeft: 20,
                 marginTop: 20,
@@ -98,7 +118,6 @@ export default function RegisterAccount({ navigation, route   }) {
           </TouchableOpacity>
         </View>
 
-        {/* Phần nội dung chính */}
         <View style={{ width: "100%" }}>
           <View
             style={{
@@ -110,7 +129,6 @@ export default function RegisterAccount({ navigation, route   }) {
               borderTopRightRadius: 10,
             }}
           >
-            {/* Phần hiển thị hình ảnh và tiêu đề */}
             <View style={{ alignItems: "center", marginTop: 30 }}>
               <Image
                 source={require("../Image/login/register.png")}
@@ -127,7 +145,6 @@ export default function RegisterAccount({ navigation, route   }) {
               </Text>
             </View>
 
-            {/* Input cho username */}
             <View style={{ marginTop: 20, marginLeft: 20, borderRadius: 15 }}>
               <Image
                 source={require("../Image/login/account.png")}
@@ -155,7 +172,6 @@ export default function RegisterAccount({ navigation, route   }) {
               />
             </View>
 
-            {/* Input cho email */}
             <View style={{ marginTop: 0, marginLeft: 20, borderRadius: 15 }}>
               <Image
                 source={require("../Image/login/email.png")}
@@ -183,7 +199,6 @@ export default function RegisterAccount({ navigation, route   }) {
               />
             </View>
 
-            {/* Input cho password */}
             <View style={{ marginTop: 0, marginLeft: 20, borderRadius: 15 }}>
               <Image
                 source={require("../Image/login/lock.png")}
@@ -198,7 +213,7 @@ export default function RegisterAccount({ navigation, route   }) {
               />
               <TouchableOpacity
                 onPress={() => {
-                  setIsChecked2(!isChecked2); // Hiển thị/ẩn mật khẩu
+                  setIsChecked2(!isChecked2);
                 }}
               >
                 <Image
@@ -231,31 +246,34 @@ export default function RegisterAccount({ navigation, route   }) {
               />
             </View>
 
-            {/* Checkbox đồng ý điều kiện */}
-            <View style={{ marginTop: 0, marginLeft: 20, borderRadius: 15 }}>
-              <View
-                style={{ flex: 1, flexDirection: "row", alignItems: "center" }}
-              >
-                <View>
-                  <CheckBox
-                    isChecked={isChecked}
-                    onClick={() => setIsChecked(!isChecked)}
-                  />
-                </View>
-                <Text style={{ marginLeft: 10 }}>I agree with </Text>
-                <Text style={{ color: "#33CCFF", fontWeight: "bold" }}>
-                  Terms & Conditions
+            <View style={{ marginTop: 10, marginLeft: 20, borderRadius: 15 }}>
+              {/* Checkbox đồng ý điều khoản */}
+              <View style={{ flexDirection: "row", alignItems: "center" }}>
+                <CheckBox
+                  isChecked={isChecked}
+                  onClick={() => setIsChecked(!isChecked)}
+                />
+                <Text style={{ marginLeft: 10 }}>
+                  I agree to the{" "}
+                  <Text
+                    style={{ color: "#33CCFF", fontWeight: "bold" }}
+                    onPress={() => {
+                      // Có thể mở một modal hoặc trang mới hiển thị điều khoản
+                      console.log("Terms & Conditions clicked");
+                    }}
+                  >
+                    Terms & Conditions
+                  </Text>
                 </Text>
               </View>
               {errors.checkbox && (
-                <Text style={{ color: "red", marginLeft: 20 }}>
+                <Text style={{ color: "red", marginTop: 5 }}>
                   You must agree to the Terms & Conditions
                 </Text>
               )}
             </View>
 
-            {/* Thêm mục upload ảnh dưới các ô nhập */}
-            <View style={{ alignItems: "center", marginTop: 20 }}> 
+            <View style={{ alignItems: "center", marginTop: 20 }}>
               {avatar ? (
                 <Image
                   source={{ uri: avatar.uri }}
@@ -280,7 +298,6 @@ export default function RegisterAccount({ navigation, route   }) {
               </TouchableOpacity>
             </View>
 
-            {/* Nút "Continue" */}
             <View style={{ marginTop: 25, marginLeft: 20, paddingBottom: 20 }}>
               <TouchableOpacity
                 style={{
@@ -299,6 +316,20 @@ export default function RegisterAccount({ navigation, route   }) {
           </View>
         </View>
       </View>
+
+      <Modal visible={modalVisible} transparent={true} animationType="slide">
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalMessage}>{modalMessage}</Text>
+            <TouchableOpacity
+              style={styles.modalButton}
+              onPress={() => setModalVisible(false)}
+            >
+              <Text style={styles.modalButtonText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -314,5 +345,32 @@ const styles = StyleSheet.create({
     width: "95%",
     fontSize: 18,
     paddingLeft: 50,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.5)",
+  },
+  modalContent: {
+    backgroundColor: "white",
+    padding: 20,
+    borderRadius: 10,
+    alignItems: "center",
+  },
+  modalMessage: {
+    fontSize: 16,
+    marginBottom: 15,
+    textAlign: "center",
+  },
+  modalButton: {
+    backgroundColor: "#33CCFF",
+    borderRadius: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+  },
+  modalButtonText: {
+    color: "white",
+    fontSize: 16,
   },
 });

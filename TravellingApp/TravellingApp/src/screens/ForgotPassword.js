@@ -7,50 +7,52 @@ import {
   TouchableOpacity,
   TextInput,
   Image,
-  Alert,
+  Modal,
 } from "react-native";
 
 export default function ForgotPassword({ navigation }) {
   const [isChecked, setIsChecked] = useState(false);
   const [isChecked2, setIsChecked2] = useState(false);
-  const [userId, setUserId] = useState(""); 
+  const [email, setEmail] = useState(""); 
   const [password, setPassword] = useState("");
   const [passwordRepeat, setPasswordRepeat] = useState("");
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
 
   const [errors, setErrors] = useState({
-    userId: false,
+    email: false,
     password: false,
     passwordMismatch: false,
   });
 
   const handleResetPassword = async () => {
     const newErrors = {
-      userId: userId === "",
+      email: email === "",
       password: password === "",
       passwordMismatch: password !== passwordRepeat,
     };
     setErrors(newErrors);
 
     if (Object.values(newErrors).includes(true)) {
-      console.log("Có lỗi trong biểu mẫu");
+      setModalMessage("Please fill all fields correctly.");
+      setModalVisible(true);
       return;
     }
 
     try {
-      const response = await axios.patch(
-        `http://localhost:3000/users/${userId}`,
-        { password }
-      );
-
-      console.log("Response:", response.data);
+      const response = await axios.patch(`http://localhost:3000/users`, {
+        email,
+        password,
+      });
 
       if (response.status === 200) {
-        Alert.alert("Thông báo", "Mật khẩu đã được thay đổi!");
-        navigation.navigate("Login");
+        setModalMessage("Password has been updated successfully!");
+        setModalVisible(true);
+        setTimeout(() => navigation.navigate("Login"), 1500);
       }
     } catch (error) {
-      console.error("Lỗi:", error);
-      Alert.alert("Lỗi", "Có lỗi xảy ra khi thay đổi mật khẩu.");
+      setModalMessage("An error occurred. Check the email or try again.");
+      setModalVisible(true);
     }
   };
 
@@ -75,25 +77,19 @@ export default function ForgotPassword({ navigation }) {
         </View>
 
         <View style={{ alignItems: "center" }}>
-          <Text style={{ fontSize: 30, fontWeight: "bold" }}>
-            Reset Password
-          </Text>
-          <Text style={{ fontSize: 15, opacity: 0.6 }}>
-            Reset your password
-          </Text>
+          <Text style={{ fontSize: 30, fontWeight: "bold" }}>Reset Password</Text>
+          <Text style={{ fontSize: 15, opacity: 0.6 }}>Reset your password</Text>
         </View>
 
         <View style={styles.inputContainer}>
           <TextInput
-            placeholder={
-              errors.userId ? "User ID is required" : "Enter your User ID"
-            }
+            placeholder={errors.email ? "Email is required" : "Enter your email"}
             style={[
               styles.input,
-              { borderColor: errors.userId ? "red" : "#EEEEEE" },
+              { borderColor: errors.email ? "red" : "#EEEEEE" },
             ]}
-            value={userId}
-            onChangeText={setUserId}
+            value={email}
+            onChangeText={setEmail}
           />
         </View>
 
@@ -156,6 +152,20 @@ export default function ForgotPassword({ navigation }) {
           </TouchableOpacity>
         </View>
       </View>
+
+      <Modal visible={modalVisible} transparent={true} animationType="slide">
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalMessage}>{modalMessage}</Text>
+            <TouchableOpacity
+              style={styles.modalButton}
+              onPress={() => setModalVisible(false)}
+            >
+              <Text style={styles.modalButtonText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -203,5 +213,32 @@ const styles = StyleSheet.create({
     color: "red",
     fontSize: 12,
     marginBottom: 10,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.5)",
+  },
+  modalContent: {
+    backgroundColor: "white",
+    padding: 20,
+    borderRadius: 10,
+    alignItems: "center",
+  },
+  modalMessage: {
+    fontSize: 16,
+    marginBottom: 15,
+    textAlign: "center",
+  },
+  modalButton: {
+    backgroundColor: "#33CCFF",
+    borderRadius: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+  },
+  modalButtonText: {
+    color: "white",
+    fontSize: 16,
   },
 });

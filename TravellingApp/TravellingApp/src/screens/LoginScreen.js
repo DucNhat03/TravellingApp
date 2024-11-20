@@ -7,18 +7,19 @@ import {
   TouchableOpacity,
   ScrollView,
   Image,
+  Modal,
+  ActivityIndicator,
 } from 'react-native';
 import { Button, Icon } from 'react-native-elements';
 import ModalDropdown from 'react-native-modal-dropdown';
-
-
-
+import axios from 'axios';
 
 const LoginScreen = ({ navigation }) => {
-  const [countryCode, setCountryCode] = useState('US');
+  const [countryCode, setCountryCode] = useState(null);
   const [phoneNumber, setPhoneNumber] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
-
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
+  const [loading, setLoading] = useState(false); // Khai báo trạng thái loading
 
   const countries = [
     { label: 'USA', value: 'US', flag: require('../Image/flags/us.png'), code: '+1' },
@@ -29,25 +30,43 @@ const LoginScreen = ({ navigation }) => {
     { label: 'France', value: 'FR', flag: require('../Image/flags/fr.png'), code: '+33' },
   ];
 
-  const navLogin = () => {
-    navigation.navigate('Login2');
-  };
+  const isValidPhoneNumber = (phone) => /^[0-9]{10}$/.test(phone); // Chỉ chấp nhận đúng 10 chữ số
 
-
-  const isValidPhoneNumber = (phone) => {
-    const phoneRegex = /^[0-9]{9,15}$/; // Giới hạn từ 9-15 chữ số
-    return phoneRegex.test(phone);
-  };
-  
-  const handleContinue = () => {
-    if (!phoneNumber || !isValidPhoneNumber(phoneNumber)) {
-      setErrorMessage('Please enter a valid phone number.');
+  const handleContinue = async () => {
+    if (!countryCode) {
+      setModalMessage('Please select your country.');
+      setModalVisible(true);
+    } else if (!phoneNumber) {
+      setModalMessage('Please enter your phone number.');
+      setModalVisible(true);
+    } else if (!isValidPhoneNumber(phoneNumber)) {
+      setModalMessage('Phone number must be exactly 10 digits.');
+      setModalVisible(true);
     } else {
-      setErrorMessage('');
-      navigation.navigate('RegisterAccount', {
-        phoneNumber: phoneNumber,
-        countryCode: countryCode,
-      });
+      setLoading(true); // Bắt đầu hiển thị ActivityIndicator
+      try {
+        const response = await axios.get('http://localhost:3000/check-phone', {
+          params: { phone_number: phoneNumber },
+        });
+
+        if (response.status === 200) {
+          setModalMessage('');
+          setModalVisible(false);
+          navigation.navigate('RegisterAccount', {
+            phoneNumber: phoneNumber,
+            countryCode: countryCode,
+          });
+        }
+      } catch (error) {
+        if (error.response && error.response.status === 409) {
+          setModalMessage('Phone number already exists.');
+        } else {
+          setModalMessage('An error occurred. Please try again.');
+        }
+        setModalVisible(true);
+      } finally {
+        setLoading(false); // Tắt ActivityIndicator khi kết thúc
+      }
     }
   };
 
@@ -91,7 +110,11 @@ const LoginScreen = ({ navigation }) => {
           />
         </View>
 
-        <Button title="Continue" buttonStyle={styles.continueButton} onPress={handleContinue} />
+        {loading ? (
+          <ActivityIndicator size="large" color="#00C2F3" />
+        ) : (
+          <Button title="Continue" buttonStyle={styles.continueButton} onPress={handleContinue} />
+        )}
 
         <Text style={styles.orText}>or</Text>
 
@@ -107,8 +130,12 @@ const LoginScreen = ({ navigation }) => {
           </Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.authButton} 
-          onPress={() => {navigation.navigate("Home")}}>
+        <TouchableOpacity
+          style={styles.authButton}
+          onPress={() => {
+            navigation.navigate('Home');
+          }}
+        >
           <Icon name="google" type="font-awesome" color="#DB4437" size={20} />
           <Text style={[styles.authButtonText, { color: '#DB4437' }]}>
             Continue with Google
@@ -126,12 +153,26 @@ const LoginScreen = ({ navigation }) => {
           </Text>.
         </Text>
 
-        <TouchableOpacity onPress={navLogin}>
+        <TouchableOpacity onPress={() => navigation.navigate('Login2')}>
           <Text style={styles.loginText}>
             Already had an account? <Text style={styles.linkText}>Log in</Text>
           </Text>
         </TouchableOpacity>
       </View>
+
+      <Modal visible={modalVisible} transparent={true} animationType="slide">
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalText}>{modalMessage}</Text>
+            <TouchableOpacity
+              style={styles.modalButton}
+              onPress={() => setModalVisible(false)}
+            >
+              <Text style={styles.modalButtonText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </ScrollView>
   );
 };
@@ -186,7 +227,7 @@ const styles = StyleSheet.create({
     height: 17,
     alignItems: 'center',
     marginRight: 10,
-    marginLeft: 10
+    marginLeft: 10,
   },
   countryLabel: {
     fontSize: 16,
@@ -197,7 +238,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 5,
-    paddingLeft: 10
+    paddingLeft: 10,
   },
   continueButton: {
     backgroundColor: '#00C2F3',
@@ -207,7 +248,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     marginVertical: 5,
     paddingBottom: 10,
-    opacity: 0.6
+    opacity: 0.6,
   },
   authButton: {
     flexDirection: 'row',
@@ -236,6 +277,33 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 10,
     fontSize: 14,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  modalText: {
+    fontSize: 16,
+    marginBottom: 15,
+    textAlign: 'center',
+  },
+  modalButton: {
+    backgroundColor: '#00C2F3',
+    borderRadius: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+  },
+  modalButtonText: {
+    color: 'white',
+    fontSize: 16,
   },
 });
 

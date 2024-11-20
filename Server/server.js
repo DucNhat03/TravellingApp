@@ -70,10 +70,13 @@ app.post(
     try {
       const hashedPassword = await bcrypt.hash(password, 10);
 
-      const sql = `INSERT INTO users (phone_number, country_code, username, email, password, avatar_url) 
-                   VALUES (?, ?, ?, ?, ?, ?)`;
+      // Mặc định vai trò là "user" khi đăng ký
+      const role = 'user';
 
-      db.query(sql, [phone_number, country_code, username, email, hashedPassword, avatarUrl], (err, result) => {
+      const sql = `INSERT INTO users (phone_number, country_code, username, email, password, avatar_url, role) 
+                   VALUES (?, ?, ?, ?, ?, ?, ?)`;
+
+      db.query(sql, [phone_number, country_code, username, email, hashedPassword, avatarUrl, role], (err, result) => {
         if (err) {
           console.error('Database Error:', err.message);
           return res.status(500).json({ error: 'Database error' });
@@ -86,6 +89,7 @@ app.post(
     }
   }
 );
+
 
 // Serve uploaded images
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -143,17 +147,37 @@ app.post(
         return res.status(401).json({ error: 'Invalid email or password' });
       }
 
-      res.status(200).json({
-        message: 'Login successful',
-        user: {
-          id: user.id,
-          username: user.username,
-          email: user.email,
-        },
-      });
+      // Kiểm tra role của người dùng
+      if (user.role === 'admin') {
+        // Nếu là admin
+        return res.status(200).json({
+          message: 'Login successful as Admin',
+          user: {
+            id: user.id,
+            username: user.username,
+            email: user.email,
+            role: user.role,
+          },
+        });
+      } else if (user.role === 'user') {
+        // Nếu là user
+        return res.status(200).json({
+          message: 'Login successful as User',
+          user: {
+            id: user.id,
+            username: user.username,
+            email: user.email,
+            role: user.role,
+          },
+        });
+      } else {
+        // Nếu role không hợp lệ
+        return res.status(403).json({ error: 'Unauthorized role' });
+      }
     });
   }
 );
+
 // profile 
 app.get('/users/:userId', (req, res) => {
   const userId = req.params.userId;
@@ -189,6 +213,37 @@ app.put('/users/:id', (req, res) => {
     }
   );
 });
+
+// API cập nhật mật khẩu bằng email
+app.patch('/users', async (req, res) => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res.status(400).json({ error: 'Email and password are required' });
+  }
+
+  try {
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const sql = 'UPDATE users SET password = ? WHERE email = ?';
+
+    db.query(sql, [hashedPassword, email], (err, result) => {
+      if (err) {
+        console.error('Database Error:', err.message);
+        return res.status(500).json({ error: 'Database error' });
+      }
+
+      if (result.affectedRows === 0) {
+        return res.status(404).json({ error: 'Email not found' });
+      }
+
+      res.status(200).json({ message: 'Password updated successfully' });
+    });
+  } catch (error) {
+    console.error('Server Error:', error.message);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 
 
 // delete
@@ -243,6 +298,29 @@ app.put('/products/:id', (req, res) => {
     res.status(200).json({ message: 'Product updated successfully' });
   });
 });
+//API kiểm tra số điện thoại có tồn tại trong cơ sở dữ liệu hay không
+app.get('/check-phone', (req, res) => {
+  const { phone_number } = req.query;
+
+  if (!phone_number) {
+    return res.status(400).json({ error: 'Phone number is required' });
+  }
+
+  const sql = 'SELECT id FROM users WHERE phone_number = ?';
+  db.query(sql, [phone_number], (err, results) => {
+    if (err) {
+      console.error('Database Error:', err.message);
+      return res.status(500).json({ error: 'Database error' });
+    }
+
+    if (results.length > 0) {
+      return res.status(409).json({ error: 'Phone number already exists' });
+    }
+
+    res.status(200).json({ message: 'Phone number is available' });
+  });
+});
+
 
 //delete product
 app.delete('/products/:id', (req, res) => {
