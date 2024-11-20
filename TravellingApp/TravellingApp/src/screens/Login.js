@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import {
   StyleSheet,
@@ -8,38 +8,21 @@ import {
   TextInput,
   Image,
   SafeAreaView,
-  Alert,
+  Modal,
 } from "react-native";
 
-export default function Login({ navigation, route }) {
-
-  const [users, setUsers] = useState([]);
+export default function Login({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isChecked3, setIsChecked3] = useState(false);
-
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
   const [errors, setErrors] = useState({
     email: false,
     password: false,
     invalidLogin: false,
   });
 
-
-
-  // Lấy danh sách người dùng từ API khi component được mount
-  useEffect(() => {
-    axios
-      .get("http://localhost:3000/users") // Gọi API GET để lấy danh sách người dùng
-      .then((response) => {
-        setUsers(response.data); // Lưu danh sách người dùng vào state
-      })
-      .catch((error) => {
-        console.error("Lỗi khi lấy danh sách người dùng:", error);
-        Alert.alert("Lỗi", "Không thể lấy dữ liệu người dùng.");
-      });
-  }, []);
-
-  // Hàm xử lý khi người dùng nhấn nút "Login"
   const handleLogin = () => {
     const newErrors = {
       email: email === "",
@@ -47,37 +30,71 @@ export default function Login({ navigation, route }) {
       invalidLogin: false,
     };
     setErrors(newErrors);
-  
+
     if (newErrors.email || newErrors.password) return;
-  
+
     const trimmedEmail = email.trim().toLowerCase();
     const trimmedPassword = password.trim();
-  
-    axios.post("http://localhost:3000/login", { email: trimmedEmail, password: trimmedPassword })
-      .then(response => {
-        const userData = response.data;
-        Alert.alert("Thông báo", "Đăng nhập thành công!");
-        navigation.navigate("Home", { profile: userData }); // Truyền dữ liệu user
+
+    axios
+      .post("http://localhost:3000/login", {
+        email: trimmedEmail,
+        password: trimmedPassword,
       })
-      .catch(error => {
-        setErrors(prevErrors => ({ ...prevErrors, invalidLogin: true }));
-        console.error("Login error:", error);
+      .then((response) => {
+        const userData = response.data;
+
+        if (userData.user && userData.user.role === "admin") {
+          setModalMessage("Đăng nhập với tư cách Admin!"); 
+          setModalVisible(true);
+          setTimeout(() => {
+            setModalVisible(false);
+            navigation.navigate("AdminHome", { profile: userData });
+          }, 1500);
+        } else {
+          setModalMessage("Đăng nhập thành công!");
+          setModalVisible(true);
+          setTimeout(() => {
+            setModalVisible(false);
+            navigation.navigate("Home", { profile: userData });
+          }, 1500);
+        }
+      })
+      .catch((error) => {
+        setErrors((prevErrors) => ({ ...prevErrors, invalidLogin: true }));
+        setModalMessage("Email hoặc mật khẩu không chính xác.");
+        setModalVisible(true);
       });
   };
-  
-  
 
   return (
     <SafeAreaView style={styles.container}>
-      {/*back button*/}
-      <View style={{ width: "100%"}}>
+      {/* Modal hiển thị thông báo */}
+      <Modal visible={modalVisible} transparent={true} animationType="slide">
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalMessage}>{modalMessage}</Text>
+            <TouchableOpacity
+              style={styles.modalButton}
+              onPress={() => setModalVisible(false)}
+            >
+              <Text style={styles.modalButtonText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Back button */}
+      <View style={{ width: "100%" }}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Image
-          source={require("../Image/dataicon/backicon.png")}
+            source={require("../Image/dataicon/backicon.png")}
             style={styles.backButton}
           />
         </TouchableOpacity>
       </View>
+
+      {/* Header image */}
       <View style={styles.imageContainer}>
         <Image
           source={require("../Image/homescreen/ApartmentinOmaha.png")}
@@ -86,12 +103,13 @@ export default function Login({ navigation, route }) {
         />
       </View>
 
+      {/* Form container */}
       <View style={styles.formContainer}>
         <View style={styles.welcomeContainer}>
           <Text style={styles.welcomeText}>Welcome!</Text>
         </View>
 
-        {/* Input cho email */}
+        {/* Input email */}
         <View style={styles.inputContainer}>
           <Image
             source={require("../Image/login/email.png")}
@@ -103,17 +121,17 @@ export default function Login({ navigation, route }) {
             }
             style={[
               styles.input,
-              { borderColor: errors.email ? "red" : "#EEEEEE" }, // Đổi màu viền nếu có lỗi
+              { borderColor: errors.email ? "red" : "#EEEEEE" },
             ]}
             value={email}
-            onChangeText={setEmail} // Cập nhật email khi người dùng nhập
+            onChangeText={setEmail}
           />
           {errors.email && (
             <Text style={styles.errorText}>Please enter your email.</Text>
           )}
         </View>
 
-        {/* Input cho password */}
+        {/* Input password */}
         <View style={styles.inputContainer}>
           <Image
             source={require("../Image/login/lock.png")}
@@ -121,9 +139,7 @@ export default function Login({ navigation, route }) {
           />
           <TouchableOpacity
             style={styles.eyeButton}
-            onPress={() => {
-              setIsChecked3(!isChecked3); // Hiển thị/ẩn mật khẩu
-            }}
+            onPress={() => setIsChecked3(!isChecked3)}
           >
             <Image
               source={require("../Image/login/eye.png")}
@@ -137,48 +153,42 @@ export default function Login({ navigation, route }) {
             placeholder={
               errors.password ? "Password is required" : "Enter your password"
             }
-            secureTextEntry={!isChecked3} // Hiển thị hoặc ẩn mật khẩu
+            secureTextEntry={!isChecked3}
             style={[
               styles.input,
-              { borderColor: errors.password ? "red" : "#EEEEEE" }, // Đổi màu viền nếu có lỗi
+              { borderColor: errors.password ? "red" : "#EEEEEE" },
             ]}
             value={password}
-            onChangeText={setPassword} // Cập nhật password khi người dùng nhập
+            onChangeText={setPassword}
           />
           {errors.password && (
             <Text style={styles.errorText}>Please enter your password.</Text>
           )}
         </View>
 
-        {/* Hiển thị lỗi nếu email hoặc password không khớp */}
+        {/* Error invalid login */}
         {errors.invalidLogin && (
           <Text style={styles.errorText}>
             Incorrect email or password. Please try again.
           </Text>
         )}
 
-        {/*Nút reset password*/}
-
-        <View
-          style={{
-            width: "95%",
-            alignItems: "flex-end",
-          }}
-        >
+        {/* Forgot password link */}
+        <View style={styles.forgotPasswordContainer}>
           <TouchableOpacity
             onPress={() => {
               navigation.navigate("ForgotPassword");
             }}
           >
-            <Text>Forgot password?</Text>
+            <Text style={styles.forgotPasswordText}>Forgot password?</Text>
           </TouchableOpacity>
         </View>
 
-        {/* Nút "Login" */}
+        {/* Login button */}
         <View style={styles.loginButtonContainer}>
           <TouchableOpacity
             style={styles.loginButton}
-            onPress={handleLogin} // Gọi hàm handleLogin khi nhấn nút
+            onPress={handleLogin}
           >
             <Text style={styles.loginButtonText}>Login</Text>
           </TouchableOpacity>
@@ -217,7 +227,7 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 220,
     borderRadius: 30,
-    padding: 5
+    padding: 5,
   },
   formContainer: {
     width: "100%",
@@ -279,6 +289,14 @@ const styles = StyleSheet.create({
     marginTop: -15,
     marginBottom: 10,
   },
+  forgotPasswordContainer: {
+    width: "95%",
+    alignItems: "flex-end",
+    marginBottom: 20,
+  },
+  forgotPasswordText: {
+    color: "#33CCFF",
+  },
   loginButtonContainer: {
     marginTop: 20,
     marginLeft: 20,
@@ -295,5 +313,31 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
     color: "white",
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.5)",
+  },
+  modalContent: {
+    backgroundColor: "white",
+    padding: 20,
+    borderRadius: 10,
+    alignItems: "center",
+  },
+  modalMessage: {
+    fontSize: 16,
+    textAlign: "center",
+    marginBottom: 10,
+  },
+  modalButton: {
+    backgroundColor: "#33CCFF",
+    padding: 10,
+    borderRadius: 5,
+  },
+  modalButtonText: {
+    color: "white",
+    fontSize: 16,
   },
 });
