@@ -11,6 +11,9 @@ CREATE TABLE users (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
+ALTER TABLE users
+ADD role ENUM('user', 'admin') DEFAULT 'user' AFTER updated_at;
+
 USE travelingapp;
 
 CREATE TABLE products (
@@ -95,5 +98,9 @@ VALUES
 (1, 'You', 'Sure, how can I help?', '2024-11-16 10:32:00'),
 (2, 'Jane Smith', 'Your payment has been received. Thank you!', '2024-11-16 09:15:00'),
 (3, 'Host Support', 'We are here to help you with your stay.', '2024-11-15 18:00:00');
+
+
+ 
+
 
 
