@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
-import { useNavigation } from "@react-navigation/native"; 
+import { useNavigation } from "@react-navigation/native";
 
 const GuestSelectionScreen = () => {
   const navigation = useNavigation();
@@ -21,7 +21,10 @@ const GuestSelectionScreen = () => {
     <View style={styles.container}>
       <View style={styles.containerTop}>
         <View style={styles.closeContainer}>
-          <TouchableOpacity style={styles.closeButton} onPress={() => navigation.goBack()}>
+          <TouchableOpacity
+            style={styles.closeButton}
+            onPress={() => navigation.goBack()}
+          >
             <Text style={styles.closeText}>x</Text>
           </TouchableOpacity>
         </View>
@@ -86,7 +89,14 @@ const GuestSelectionScreen = () => {
         <TouchableOpacity>
           <Text style={styles.clearText}>Clear all</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.searchButton}>
+        <TouchableOpacity
+          style={styles.searchButton}
+          onPress={() =>
+            navigation.navigate("ConfirmAndPayScreen", {
+              guests: `${adultsCount} adults, ${childrenCount} children`,
+            })
+          }
+        >
           <Text style={styles.searchButtonText}>Search</Text>
         </TouchableOpacity>
       </View>
@@ -103,7 +113,7 @@ const styles = StyleSheet.create({
   },
   containerTop: {
     flex: 1,
-    justifyContent: 'flex-start',
+    justifyContent: "flex-start",
   },
   header: {
     marginTop: 30,
@@ -114,7 +124,7 @@ const styles = StyleSheet.create({
   locationLabel: {
     fontSize: 16,
     color: "#777",
-    marginLeft: 10
+    marginLeft: 10,
   },
   locationValue: {
     fontSize: 16,
@@ -127,7 +137,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginBottom: 16,
     marginRight: 10,
-    marginLeft: 10
+    marginLeft: 10,
   },
   datesLabel: {
     fontSize: 16,
@@ -142,7 +152,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     borderRadius: 8,
     padding: 16,
-    justifyContent: 'space-between',
+    justifyContent: "space-between",
     height: 250,
     borderWidth: 1,
     borderColor: "#777",

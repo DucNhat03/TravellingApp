@@ -62,11 +62,9 @@ const HomeScreen = ({ route, navigation }) => {
   const handleFavorite = () => {
     navigation.navigate("Favorites", {
       favorites,
-      setFavorites,
+      onUpdateFavorites: (updatedFavorites) => setFavorites(updatedFavorites),
     });
   };
-
-
 
   const handleProfile = () => {
       console.log("Navigating to ProfileScreen with userId:", profileData.id); // Log để kiểm tra
@@ -74,7 +72,6 @@ const HomeScreen = ({ route, navigation }) => {
     
   };
   
-
   useFocusEffect(
     React.useCallback(() => {
       if (route.params?.updatedMessages) {

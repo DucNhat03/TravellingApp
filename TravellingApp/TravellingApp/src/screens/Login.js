@@ -78,7 +78,7 @@ export default function Login({ navigation }) {
               style={styles.modalButton}
               onPress={() => setModalVisible(false)}
             >
-              <Text style={styles.modalButtonText}>Close</Text>
+              <Text style={styles.modalButtonText}>OK</Text>
             </TouchableOpacity>
           </View>
         </View>

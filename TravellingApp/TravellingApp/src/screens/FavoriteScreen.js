@@ -10,12 +10,10 @@ import {
   SafeAreaView,
   Alert,
 } from "react-native";
-import Hoverable from "react-native-hoverable";
 import { useFocusEffect } from "@react-navigation/native";
 
 const FavoritesScreen = ({ route, navigation }) => {
   const [favorites, setFavorites] = useState(route.params?.favorites || []);
-  const [selectedFooter, setSelectedFooter] = useState("Favorites");
 
   useFocusEffect(
     React.useCallback(() => {
@@ -26,8 +24,12 @@ const FavoritesScreen = ({ route, navigation }) => {
   );
 
   const handleGoBack = () => {
-    navigation.navigate("Home", { favorites });
+    if (route.params?.onUpdateFavorites) {
+      route.params.onUpdateFavorites(favorites);
+    }
+    navigation.goBack();
   };
+  
 
   const handleProductDetail = (product) => {
     navigation.navigate("DetailScreen", { product });
@@ -35,24 +37,10 @@ const FavoritesScreen = ({ route, navigation }) => {
 
   const handleClearFavorites = () => {
     setFavorites([]);
-    navigation.navigate("Home", { favorites: [] });
-  };
-
-  const handleFavorite = () => {
-    setSelectedFooter("Favorites");
-    navigation.navigate("Favorites", {
-      favorites,
-    });
-  };
-
-  const handleInbox = () => {
-    setSelectedFooter("Inbox");
-    navigation.navigate("InboxScreen");
-  };
-
-  const handleProfile = () => {
-    setSelectedFooter("Profile");
-    navigation.navigate("ProfileScreen");
+    if (route.params?.onUpdateFavorites) {
+      route.params.onUpdateFavorites([]);
+    }
+    navigation.goBack();
   };
 
   return (
@@ -116,59 +104,6 @@ const FavoritesScreen = ({ route, navigation }) => {
             <Text style={styles.noFavoritesText}>No favorites added yet.</Text>
           )}
         </ScrollView>
-
-        {/* Footer */}
-        <View style={styles.footer}>
-          {[
-            {
-              label: "Search",
-              icon: require("../Image/dataicon/search.png"),
-              action: () => navigation.navigate("HomeScreen"),
-            },
-            {
-              label: "Favorites",
-              icon: require("../Image/homescreen/icon/favourite.png"),
-              action: handleFavorite,
-            },
-            {
-              label: "Bookings",
-              icon: require("../Image/homescreen/icon/application.png"),
-              action: () => setSelectedFooter("Bookings"),
-            },
-            {
-              label: "Inbox",
-              icon: require("../Image/dataicon/chat.png"),
-              action: handleInbox,
-            },
-            {
-              label: "Profile",
-              icon: require("../Image/dataicon/usericon.png"),
-              action: handleProfile,
-            },
-          ].map((item, index) => (
-            <Hoverable key={index}>
-              <View style={styles.footerItemContainer}>
-                <TouchableOpacity style={styles.footerItem} onPress={item.action}>
-                  <Image
-                    source={item.icon}
-                    style={[
-                      styles.footerIcon,
-                      selectedFooter === item.label && styles.activeFooterIcon,
-                    ]}
-                  />
-                  <Text
-                    style={[
-                      styles.textFooter,
-                      selectedFooter === item.label && styles.activeFooterText,
-                    ]}
-                  >
-                    {item.label}
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </Hoverable>
-          ))}
-        </View>
       </SafeAreaView>
     </View>
   );
@@ -181,7 +116,7 @@ const styles = StyleSheet.create({
   },
   scrollContainer: {
     flex: 1,
-    paddingBottom: 50,
+    paddingBottom: 20,
   },
   header: {
     width: "95%",
@@ -262,41 +197,6 @@ const styles = StyleSheet.create({
     marginTop: 20,
     fontSize: 16,
     color: "#888",
-  },
-  footer: {
-    flexDirection: "row",
-    height: 60,
-    alignItems: "center",
-    justifyContent: "space-between",
-    backgroundColor: "#F5F5F5",
-    paddingHorizontal: 8,
-  },
-  footerItem: {
-    width: 40,
-    height: 40,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  footerIcon: {
-    width: 27,
-    height: 27,
-    resizeMode: "contain",
-    tintColor: "#000",
-  },
-  footerItemContainer: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  textFooter: {
-    fontSize: 12,
-    color: "#000",
-  },
-  activeFooterIcon: {
-    tintColor: "#00BFFF",
-  },
-  activeFooterText: {
-    color: "#00BFFF",
   },
 });
 

@@ -8,88 +8,90 @@ import {
   TouchableOpacity,
 } from "react-native";
 
-const DescriptionScreen = ({ navigation }) => (
-  <ScrollView style={styles.container}>
-    {/* Header */}
-    <View style={styles.header}>
-      <TouchableOpacity
-        onPress={() => {
-          navigation.goBack();
-        }}
-      >
-        <Image
-          source={require("../Image/descriptionscreen/backicon.png")}
-          style={styles.icon}
-        />
-      </TouchableOpacity>
-      <Text style={styles.headerTitle}>Description</Text>
-    </View>
+const DescriptionScreen = ({ route, navigation }) => {
+  const { image, description } = route.params; // Nhận hình ảnh và mô tả từ params
 
-    {/* Image */}
-    <Image
-      source={require("../Image/descriptionscreen/resort.png")}
-      style={styles.image}
-    />
+  return (
+    <ScrollView style={styles.container}>
+      {/* Header */}
+      <View style={styles.header}>
+        <TouchableOpacity
+          onPress={() => {
+            navigation.goBack();
+          }}
+        >
+          <Image
+            source={require("../Image/descriptionscreen/backicon.png")}
+            style={styles.icon}
+          />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Description</Text>
+      </View>
 
-    {/* Description Text */}
-    <Text style={styles.descriptionText}>
-      Looking for the perfect place to relax and unwind? This stunning Balinese
-      villa is the ultimate tropical getaway. Located on a quiet street just
-      minutes from the beach, this beautiful home offers everything you need for
-      a luxurious and comfortable stay.
-    </Text>
+      {/* Image */}
+      <Image
+        source={{ uri: image }} // Hiển thị hình ảnh nhận được từ DetailScreen
+        style={styles.image}
+      />
 
-    {/* Location */}
-    <View style={styles.locationContainer}>
-      <View style={{ flexDirection: "row" }}>
-        <Image
-          source={require("../Image/descriptionscreen/location.png")}
-          style={styles.locationIcon}
-        />
-        <Text style={styles.locationText}>Bali, Indonesia</Text>
-      </View>
-      <TouchableOpacity
-        onPress={() =>
-          navigation.navigate("MapScreen", {
-            location: { latitude: -8.409518, longitude: 115.188919 }, // Vị trí Bali
-            title: "Bali, Indonesia",
-          })
-        }
-      >
-        <Text style={styles.openMap}>Open map</Text>
-      </TouchableOpacity>
-    </View>
+      {/* Description Text */}
+      <Text style={styles.descriptionText}>
+        {description} {/* Hiển thị mô tả nhận được */}
+      </Text>
 
-    {/* Features List */}
-    <View style={styles.featuresContainer}>
-      <View style={styles.featureItem}>
-        <Image
-          source={require("../Image/descriptionscreen/check.png")}
-          style={styles.checkIcon}
-        />
-        <Text style={styles.featureText}>Consectetur magna consectetur</Text>
+      {/* Location */}
+      <View style={styles.locationContainer}>
+        <View style={{ flexDirection: "row" }}>
+          <Image
+            source={require("../Image/descriptionscreen/location.png")}
+            style={styles.locationIcon}
+          />
+          <Text style={styles.locationText}>Bali, Indonesia</Text>
+        </View>
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate("MapScreen", {
+              location: { latitude: -8.409518, longitude: 115.188919 }, // Vị trí Bali
+              title: "Bali, Indonesia",
+            })
+          }
+        >
+          <Text style={styles.openMap}>Open map</Text>
+        </TouchableOpacity>
       </View>
-      <View style={styles.featureItem}>
-        <Image
-          source={require("../Image/descriptionscreen/check.png")}
-          style={styles.checkIcon}
-        />
-        <Text style={styles.featureText}>
-          Voluptate magna fugiat tempor incididunt
-        </Text>
+
+      {/* Features List */}
+      <View style={styles.featuresContainer}>
+        <View style={styles.featureItem}>
+          <Image
+            source={require("../Image/descriptionscreen/check.png")}
+            style={styles.checkIcon}
+          />
+          <Text style={styles.featureText}>Consectetur magna consectetur</Text>
+        </View>
+        <View style={styles.featureItem}>
+          <Image
+            source={require("../Image/descriptionscreen/check.png")}
+            style={styles.checkIcon}
+          />
+          <Text style={styles.featureText}>
+            Voluptate magna fugiat tempor incididunt
+          </Text>
+        </View>
+        <View style={styles.featureItem}>
+          <Image
+            source={require("../Image/descriptionscreen/check.png")}
+            style={styles.checkIcon}
+          />
+          <Text style={styles.featureText}>
+            Aliqua in in mollit laboris tempor in ut incididunt
+          </Text>
+        </View>
       </View>
-      <View style={styles.featureItem}>
-        <Image
-          source={require("../Image/descriptionscreen/check.png")}
-          style={styles.checkIcon}
-        />
-        <Text style={styles.featureText}>
-          Aliqua in in mollit laboris tempor in ut incididunt
-        </Text>
-      </View>
-    </View>
-  </ScrollView>
-);
+    </ScrollView>
+  );
+};
+
 
 const styles = StyleSheet.create({
   container: {

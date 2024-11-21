@@ -15,12 +15,12 @@ const DetailScreen = ({ route, navigation }) => {
   const { product } = route.params; // Nhận thông tin sản phẩm từ route
 
   const [images] = useState([
-    require("../Image/homescreen/ApartmentinOmaha.png"),
-    require("../Image/homescreen/ApartmentinSanJose.png"),
-    require("../Image/homescreen/ApartmentinOmaha.png"),
-    require("../Image/homescreen/ApartmentinOmaha.png"),
-    require("../Image/homescreen/ApartmentinSanJose.png"),
-    require("../Image/homescreen/ApartmentinOmaha.png"),
+    require("../Image/detailRoom/anh1.png"),
+    require("../Image/detailRoom/anh6.png"),
+    require("../Image/detailRoom/anh2.png"),
+    require("../Image/detailRoom/anh3.png"),
+    require("../Image/detailRoom/anh5.png"),
+    require("../Image/detailRoom/anh4.png")
   ]);
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -39,14 +39,24 @@ const DetailScreen = ({ route, navigation }) => {
     navigation.navigate("ReviewsScreen");
   };
   const handleDescription = () => {
-    navigation.navigate("DescriptionScreen");
+    navigation.navigate("DescriptionScreen", {
+      image: product.image_url, // Truyền URL của hình ảnh sản phẩm
+    });
   };
   const handlePoliciesDetail = () => {
     navigation.navigate("PoliciesDetailScreen");
   };
   const handleBookNow = () => {
-    navigation.navigate("ConfirmAndPayScreen");
+    navigation.navigate("ConfirmAndPayScreen", {
+      product: {
+        name: product.name,
+        price: product.price,
+        image_url: product.image_url,
+        rating: product.rating,
+      },
+    });
   };
+  
   return (
     <View style={{ height: "100vh", overflow: "auto" }}>
       <ScrollView style={{ overflow: "auto", flex: 1 }}>
@@ -158,7 +168,7 @@ const DetailScreen = ({ route, navigation }) => {
         <View style={styles.descriptionContainer}>
           <Text style={styles.sectionTitle}>Description</Text>
           <Image
-            source={require("../Image/homescreen/ApartmentinOmaha.png")}
+            source={{ uri: product.image_url }}
             style={styles.descriptionImage}
           />
           <Text>

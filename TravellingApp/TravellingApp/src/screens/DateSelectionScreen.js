@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
-import { useNavigation } from "@react-navigation/native"; 
+import { useNavigation } from "@react-navigation/native";
 
 const DateSelectionScreen = () => {
   const navigation = useNavigation();
@@ -43,131 +43,149 @@ const DateSelectionScreen = () => {
   };
 
   return (
-    <View style={{ height: '100vh', overflow: 'auto' }}>
-    <View style={styles.container}>
-      <View style={styles.closeContainer}>
-        <TouchableOpacity style={styles.closeButton} onPress={() => navigation.goBack()}>
-          <Text style={styles.closeText}>x</Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.locationLabel}>Location</Text>
-        <Text style={styles.locationValue}>Anywhere</Text>
-      </View>
-
-      {/* When Staying */}
-      <View style={styles.stayContainer}>
-        <Text style={styles.stayTitle}>When staying</Text>
-        <View style={styles.stayOptions}>
+    <View style={{ height: "100vh", overflow: "auto" }}>
+      <View style={styles.container}>
+        <View style={styles.closeContainer}>
           <TouchableOpacity
-            style={[
-              styles.stayOptionButton,
-              selectedOption === "Choose dates" && styles.stayOptionButtonActive,
-            ]}
-            onPress={() => setSelectedOption("Choose dates")}
+            style={styles.closeButton}
+            onPress={() => navigation.goBack()}
           >
-            <Text
-              style={[
-                styles.stayOptionText,
-                selectedOption === "Choose dates" && styles.stayOptionTextActive,
-              ]}
-            >
-              Choose dates
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[
-              styles.stayOptionButton,
-              selectedOption === "Anytime" && styles.stayOptionButtonActive,
-            ]}
-            onPress={() => setSelectedOption("Anytime")}
-          >
-            <Text
-              style={[
-                styles.stayOptionText,
-                selectedOption === "Anytime" && styles.stayOptionTextActive,
-              ]}
-            >
-              Anytime
-            </Text>
+            <Text style={styles.closeText}>x</Text>
           </TouchableOpacity>
         </View>
 
-        {/* Calendar */}
-        <View style={styles.calendarContainer}>
-          <View style={styles.calendarHeader}>
-            <Text style={styles.calendarMonth}>
-              {new Date(currentYear, currentMonth - 1).toLocaleString("default", {
-                month: "long",
-              })}{" "}
-              {currentYear}
-            </Text>
-            <View style={styles.calendarNav}>
-              <TouchableOpacity onPress={handlePreviousMonth}>
-                <Text style={styles.navButton}>{"<"}</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={handleNextMonth}>
-                <Text style={styles.navButton}>{">"}</Text>
-              </TouchableOpacity>
+        {/* Header */}
+        <View style={styles.header}>
+          <Text style={styles.locationLabel}>Location</Text>
+          <Text style={styles.locationValue}>Anywhere</Text>
+        </View>
+
+        {/* When Staying */}
+        <View style={styles.stayContainer}>
+          <Text style={styles.stayTitle}>When staying</Text>
+          <View style={styles.stayOptions}>
+            <TouchableOpacity
+              style={[
+                styles.stayOptionButton,
+                selectedOption === "Choose dates" &&
+                  styles.stayOptionButtonActive,
+              ]}
+              onPress={() => setSelectedOption("Choose dates")}
+            >
+              <Text
+                style={[
+                  styles.stayOptionText,
+                  selectedOption === "Choose dates" &&
+                    styles.stayOptionTextActive,
+                ]}
+              >
+                Choose dates
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.stayOptionButton,
+                selectedOption === "Anytime" && styles.stayOptionButtonActive,
+              ]}
+              onPress={() => setSelectedOption("Anytime")}
+            >
+              <Text
+                style={[
+                  styles.stayOptionText,
+                  selectedOption === "Anytime" && styles.stayOptionTextActive,
+                ]}
+              >
+                Anytime
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Calendar */}
+          <View style={styles.calendarContainer}>
+            <View style={styles.calendarHeader}>
+              <Text style={styles.calendarMonth}>
+                {new Date(currentYear, currentMonth - 1).toLocaleString(
+                  "default",
+                  {
+                    month: "long",
+                  }
+                )}{" "}
+                {currentYear}
+              </Text>
+              <View style={styles.calendarNav}>
+                <TouchableOpacity onPress={handlePreviousMonth}>
+                  <Text style={styles.navButton}>{"<"}</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={handleNextMonth}>
+                  <Text style={styles.navButton}>{">"}</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            {/* Week Days */}
+            <View style={styles.weekDays}>
+              {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((day) => (
+                <Text key={day} style={styles.weekDay}>
+                  {day}
+                </Text>
+              ))}
+            </View>
+
+            {/* Dates */}
+            <View style={styles.datesContainer}>
+              {Array.from(
+                { length: getDaysInMonth(currentMonth, currentYear) },
+                (_, i) => (
+                  <TouchableOpacity
+                    key={i}
+                    style={[
+                      styles.date,
+                      selectedDate === i + 1 && styles.selectedDate,
+                    ]}
+                    onPress={() => setSelectedDate(i + 1)}
+                  >
+                    <Text style={styles.dateText}>{i + 1}</Text>
+                  </TouchableOpacity>
+                )
+              )}
             </View>
           </View>
 
-          {/* Week Days */}
-          <View style={styles.weekDays}>
-            {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((day) => (
-              <Text key={day} style={styles.weekDay}>
-                {day}
-              </Text>
-            ))}
-          </View>
-
-          {/* Dates */}
-          <View style={styles.datesContainer}>
-            {Array.from({ length: getDaysInMonth(currentMonth, currentYear) }, (_, i) => (
-              <TouchableOpacity
-                key={i}
-                style={[
-                  styles.date,
-                  selectedDate === i + 1 && styles.selectedDate,
-                ]}
-                onPress={() => setSelectedDate(i + 1)}
-              >
-                <Text style={styles.dateText}>{i + 1}</Text>
-              </TouchableOpacity>
-            ))}
+          {/* Days Count */}
+          <View style={styles.daysCounter}>
+            <TouchableOpacity
+              onPress={decreaseDaysCount}
+              style={styles.counterButton}
+            >
+              <Text style={styles.counterText}>-</Text>
+            </TouchableOpacity>
+            <Text style={styles.daysText}>{daysCount} days</Text>
+            <TouchableOpacity
+              onPress={increaseDaysCount}
+              style={styles.counterButton}
+            >
+              <Text style={styles.counterText}>+</Text>
+            </TouchableOpacity>
           </View>
         </View>
 
-        {/* Days Count */}
-        <View style={styles.daysCounter}>
-          <TouchableOpacity
-            onPress={decreaseDaysCount}
-            style={styles.counterButton}
-          >
-            <Text style={styles.counterText}>-</Text>
+        {/* Footer */}
+        <View style={styles.footer}>
+          <TouchableOpacity>
+            <Text style={styles.footerText}>Skip</Text>
           </TouchableOpacity>
-          <Text style={styles.daysText}>{daysCount} days</Text>
           <TouchableOpacity
-            onPress={increaseDaysCount}
-            style={styles.counterButton}
+            style={styles.nextButton}
+            onPress={() =>
+              navigation.navigate("ConfirmAndPayScreen", {
+                dates: `${selectedDate} ${currentMonth} - ${daysCount} days`,
+              })
+            }
           >
-            <Text style={styles.counterText}>+</Text>
+            <Text style={styles.nextButtonText}>Next</Text>
           </TouchableOpacity>
         </View>
       </View>
-
-      {/* Footer */}
-      <View style={styles.footer}>
-        <TouchableOpacity>
-          <Text style={styles.footerText}>Skip</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.nextButton}>
-          <Text style={styles.nextButtonText}>Next</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
     </View>
   );
 };
@@ -176,13 +194,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    width: '100%',
+    width: "100%",
   },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     marginBottom: 16,
-    width: '90%',
+    width: "90%",
     marginLeft: 16,
   },
   closeContainer: {
@@ -316,7 +334,7 @@ const styles = StyleSheet.create({
   footer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    width: '90%',
+    width: "90%",
     marginLeft: 16,
     alignItems: "center",
     paddingBottom: 15,
