@@ -459,11 +459,49 @@ app.get('/conversations/:id', (req, res) => {
   });
 });
 
+//add booking
+app.post('/bookings', (req, res) => {
+  const { user_id, product_id, booking_date, booking_time, amount, status } = req.body;
+
+  // Chuyển đổi định dạng ngày
+  const formattedDate = new Date(booking_date).toISOString().split('T')[0];
+
+  // Chuyển đổi định dạng thời gian (9:02:58 AM -> 09:02:58)
+  const [time, period] = booking_time.split(' '); // Tách thời gian và AM/PM
+  let [hours, minutes, seconds] = time.split(':');
+  if (period === 'PM' && hours !== '12') {
+    hours = String(parseInt(hours) + 12);
+  }
+  if (period === 'AM' && hours === '12') {
+    hours = '00';
+  }
+  const formattedTime = `${hours}:${minutes}:${seconds}`;
+
+  const sql = `
+    INSERT INTO bookings (user_id, product_id, booking_date, booking_time, amount, status)
+    VALUES (?, ?, ?, ?, ?, ?)
+  `;
+
+  db.query(sql, [user_id, product_id, formattedDate, formattedTime, amount, status || 'Pending'], (err, result) => {
+    if (err) {
+      console.error('Database Error:', err.message);
+      return res.status(500).json({ error: 'Database error' });
+    }
+    res.status(201).json({ message: 'Booking added successfully', bookingId: result.insertId });
+  });
+});
+
+
+
 
 //get booking
 app.get('/bookings', (req, res) => {
   const sql = `
-    SELECT b.*, u.username AS user_name, p.name AS product_name 
+    SELECT 
+      b.*, 
+      u.username AS user_name, 
+      p.name AS product_name, 
+      p.image_url AS product_image 
     FROM bookings b
     JOIN users u ON b.user_id = u.id
     JOIN products p ON b.product_id = p.id
@@ -478,6 +516,7 @@ app.get('/bookings', (req, res) => {
     res.status(200).json(results);
   });
 });
+
 
 
 
