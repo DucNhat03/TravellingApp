@@ -13,6 +13,7 @@ const { width } = Dimensions.get("window"); // Lấy chiều rộng màn hình
 
 const DetailScreen = ({ route, navigation }) => {
   const { product } = route.params; // Nhận thông tin sản phẩm từ route
+  const userID = route.params.userID; // Nhận thông tin người dùng từ route
 
   const [images] = useState([
     require("../Image/detailRoom/anh1.png"),
@@ -49,11 +50,14 @@ const DetailScreen = ({ route, navigation }) => {
   const handleBookNow = () => {
     navigation.navigate("ConfirmAndPayScreen", {
       product: {
+        id: product.id,
         name: product.name,
         price: product.price,
         image_url: product.image_url,
         rating: product.rating,
+        userID: userID,
       },
+      
     });
   };
   

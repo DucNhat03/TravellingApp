@@ -56,7 +56,7 @@ const HomeScreen = ({ route, navigation }) => {
   };
 
   const handleProductDetail = (product) => {
-    navigation.navigate("DetailScreen", { product });
+    navigation.navigate("DetailScreen", { product, userID: profileData.id });
   };
 
   const handleFavorite = () => {
@@ -85,6 +85,10 @@ const HomeScreen = ({ route, navigation }) => {
       messages,
       setMessages,
     });
+  };
+
+  const handleBookings = () => {
+    navigation.navigate("BookingScreen");
   };
 
   const toggleFavorite = (product) => {
@@ -194,7 +198,7 @@ const HomeScreen = ({ route, navigation }) => {
             {
               label: "Bookings",
               icon: require("../Image/homescreen/icon/application.png"),
-              action: () => setSelectedFooter("Bookings"),
+              action: handleBookings,
             },
             {
               label: "Inbox",

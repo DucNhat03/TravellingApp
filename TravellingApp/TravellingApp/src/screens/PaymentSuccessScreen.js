@@ -1,80 +1,189 @@
-import React from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, Platform } from 'react-native';
-import html2pdf from 'html2pdf.js';
+import React from "react";
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+  Platform,
+  Alert,
+} from "react-native";
+import * as Print from "expo-print";
+import * as Sharing from "expo-sharing";
 
-const PaymentSuccessScreen = ({navigation}) => {
-  const createPDF = () => {
-    // Nội dung HTML cho PDF
-    const content = `
-      <div style="text-align: center;">
-        <h1>Payment Success</h1>
-        <p><strong>Ref number:</strong> 00000072697027</p>
-        <p><strong>Date:</strong> 10-31-2024</p>
-        <p><strong>Time:</strong> 11:40 PM</p>
-        <p><strong>Payment method:</strong> Credit card</p>
-        <p><strong>Amount:</strong> $100</p>
-      </div>
+const PaymentSuccessScreen = ({ route, navigation }) => {
+  const { bookingDetails } = route.params || {};
+
+  // console.log(bookingDetails.userID, bookingDetails.productID);
+
+  const formattedDate = new Date(bookingDetails.date)
+    .toISOString()
+    .split("T")[0]; // Chuyển sang YYYY-MM-DD
+  const convertTo24HourFormat = (time12h) => {
+    const [time, modifier] = time12h.split(" ");
+    let [hours, minutes, seconds] = time.split(":");
+
+    if (modifier === "PM" && hours !== "12") {
+      hours = String(parseInt(hours) + 12);
+    }
+    if (modifier === "AM" && hours === "12") {
+      hours = "00";
+    }
+
+    return `${hours}:${minutes}:${seconds}`;
+  };
+  const formattedTime = convertTo24HourFormat(bookingDetails.time);
+
+  const createPDF = async () => {
+    if (!bookingDetails) {
+      Alert.alert("Error", "No booking details available.");
+      return;
+    }
+
+    const htmlContent = `
+      <html>
+        <head>
+          <style>
+            body { font-family: Arial, sans-serif; padding: 20px; }
+            h1 { text-align: center; color: #4CAF50; }
+            .details { margin: 20px 0; }
+            .details p { margin: 5px 0; }
+            .details span { font-weight: bold; }
+            .footer { text-align: center; margin-top: 20px; font-size: 12px; color: #888; }
+          </style>
+        </head>
+        <body>
+          <h1>Payment Receipt</h1>
+          <div class="details">
+            <p><span>Booking Ref:</span> ${bookingDetails.refNumber}</p>
+            <p><span>Date:</span> ${bookingDetails.date}</p>
+            <p><span>Time:</span> ${bookingDetails.time}</p>
+            <p><span>Payment Method:</span> ${bookingDetails.paymentMethod}</p>
+            <p><span>Guests:</span> ${bookingDetails.guests}</p>
+            <p><span>Trip Dates:</span> ${bookingDetails.tripDates}</p>
+            <p><span>Amount:</span> $${bookingDetails.totalAmount}</p>
+          </div>
+          <div class="footer">
+            Thank you for booking with us!
+          </div>
+        </body>
+      </html>
     `;
 
-    if (Platform.OS === 'web') {
-      // Tạo và tải PDF trên nền tảng web
-      const opt = {
-        margin:       0.5,
-        filename:     'PaymentReceipt.pdf',
-        image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { scale: 2 },
-        jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
-      };
-    
-      html2pdf().from(content).set(opt).output('bloburl').then((pdfUrl) => {
-        window.open(pdfUrl, '_blank');
+    try {
+      const { uri } = await Print.printToFileAsync({ html: htmlContent });
+      if (Platform.OS === "ios" || Platform.OS === "android") {
+        await Sharing.shareAsync(uri);
+      } else {
+        Alert.alert("Success", "PDF saved successfully.");
+      }
+    } catch (error) {
+      Alert.alert("Error", "Failed to create PDF.");
+    }
+  };
+  const addBookingToDatabase = async () => {
+    if (!bookingDetails) {
+      Alert.alert("Error", "No booking details available.");
+      return;
+    }
+
+    try {
+      const response = await fetch("http://localhost:3000/bookings", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          user_id: bookingDetails.userID, // ID người dùng
+          product_id: bookingDetails.productID, // ID sản phẩm
+          booking_date: formattedDate, // Ngày đặt
+          booking_time: formattedTime, // Giờ đặt
+          amount: bookingDetails.totalAmount, // Tổng tiền
+          status: "Pending", // Trạng thái mặc định
+        }),
       });
-    } else {
-      // Đối với các nền tảng khác (iOS/Android), bạn có thể thêm mã cho thư viện phù hợp
-      alert("PDF generation is only supported on web in this example.");
+
+      const data = await response.json();
+
+      if (response.ok) {
+        Alert.alert("Success", "Booking added successfully!");
+        navigation.navigate("BookingScreen");
+      } else {
+        Alert.alert("Error", data.error || "Failed to add booking.");
+      }
+    } catch (error) {
+      console.error("Error adding booking:", error);
+      Alert.alert("Error", "Something went wrong.");
     }
   };
 
   return (
     <View style={styles.container}>
       {/* Icon Success */}
-      <Image source={require('../Image/dataicon/checkBigSize.png')} style={styles.successIcon} />
+      <Image
+        source={require("../Image/dataicon/checkBigSize.png")}
+        style={styles.successIcon}
+      />
 
       {/* Title */}
       <Text style={styles.title}>Payment success!</Text>
 
       {/* Transaction Details */}
-      <View style={styles.detailsContainer}>
+      <ScrollView style={styles.detailsContainer}>
         <View style={styles.detailRow}>
-          <Text style={styles.detailLabel}>Ref number</Text>
-          <Text style={styles.detailValue}>00000072697027</Text>
+          <Text style={styles.detailLabel}>Booking Ref:</Text>
+          <Text style={styles.detailValue}>
+            {bookingDetails?.refNumber || "N/A"}
+          </Text>
         </View>
         <View style={styles.detailRow}>
-          <Text style={styles.detailLabel}>Date</Text>
-          <Text style={styles.detailValue}>10-31-2024</Text>
+          <Text style={styles.detailLabel}>Date:</Text>
+          <Text style={styles.detailValue}>
+            {bookingDetails?.date || "N/A"}
+          </Text>
         </View>
         <View style={styles.detailRow}>
-          <Text style={styles.detailLabel}>Time</Text>
-          <Text style={styles.detailValue}>11:40 PM</Text>
+          <Text style={styles.detailLabel}>Time:</Text>
+          <Text style={styles.detailValue}>
+            {bookingDetails?.time || "N/A"}
+          </Text>
         </View>
         <View style={styles.detailRow}>
-          <Text style={styles.detailLabel}>Payment method</Text>
-          <Text style={styles.detailValue}>Credit card</Text>
+          <Text style={styles.detailLabel}>Payment Method:</Text>
+          <Text style={styles.detailValue}>
+            {bookingDetails?.paymentMethod || "N/A"}
+          </Text>
         </View>
         <View style={styles.detailRow}>
-          <Text style={styles.detailLabel}>Amount</Text>
-          <Text style={styles.detailValue}>$100</Text>
+          <Text style={styles.detailLabel}>Guests:</Text>
+          <Text style={styles.detailValue}>
+            {bookingDetails?.guests || "N/A"}
+          </Text>
         </View>
-      </View>
+        <View style={styles.detailRow}>
+          <Text style={styles.detailLabel}>Trip Dates:</Text>
+          <Text style={styles.detailValue}>
+            {bookingDetails?.tripDates || "N/A"}
+          </Text>
+        </View>
+        <View style={styles.detailRow}>
+          <Text style={styles.detailLabel}>Total Amount:</Text>
+          <Text style={styles.detailValue}>
+            ${bookingDetails?.totalAmount || "N/A"}
+          </Text>
+        </View>
+      </ScrollView>
 
       {/* PDF Receipt Button */}
       <TouchableOpacity style={styles.pdfButton} onPress={createPDF}>
-        <Text style={styles.pdfButtonText}>Get PDF receipt</Text>
+        <Text style={styles.pdfButtonText}>Download PDF receipt</Text>
       </TouchableOpacity>
 
       {/* View Booking Button */}
-      <TouchableOpacity style={styles.viewBookingButton}
-        onPress={() => navigation.navigate('BookingScreen')}   
+      <TouchableOpacity
+        style={styles.viewBookingButton}
+        onPress={addBookingToDatabase}
       >
         <Text style={styles.viewBookingButtonText}>View booking</Text>
       </TouchableOpacity>
@@ -85,9 +194,9 @@ const PaymentSuccessScreen = ({navigation}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#f5f5f5',
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#f5f5f5",
     padding: 16,
   },
   successIcon: {
@@ -97,64 +206,64 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 24,
-    color: '#333',
+    color: "#333",
   },
   detailsContainer: {
-    width: '100%',
-    backgroundColor: '#fff',
+    width: "100%",
+    backgroundColor: "#fff",
     borderRadius: 8,
     padding: 16,
     marginBottom: 24,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 4,
     elevation: 2,
   },
   detailRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     paddingVertical: 8,
     borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+    borderBottomColor: "#eee",
   },
   detailLabel: {
     fontSize: 14,
-    color: '#777',
+    color: "#777",
   },
   detailValue: {
     fontSize: 14,
-    fontWeight: 'bold',
-    color: '#333',
+    fontWeight: "bold",
+    color: "#333",
   },
   pdfButton: {
-    width: '100%',
+    width: "100%",
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: "#ccc",
     borderRadius: 8,
     paddingVertical: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     marginBottom: 16,
   },
   pdfButtonText: {
     fontSize: 16,
-    color: '#333',
+    color: "#333",
   },
   viewBookingButton: {
-    width: '100%',
-    backgroundColor: '#00bfff',
+    width: "100%",
+    backgroundColor: "#00bfff",
     borderRadius: 8,
     paddingVertical: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   viewBookingButtonText: {
     fontSize: 16,
-    color: '#fff',
-    fontWeight: 'bold',
+    color: "#fff",
+    fontWeight: "bold",
   },
 });
 
