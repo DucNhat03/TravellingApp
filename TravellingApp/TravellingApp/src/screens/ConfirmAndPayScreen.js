@@ -30,6 +30,19 @@ const ConfirmAndPayScreen = ({ route, navigation }) => {
   const openGuestModal = () => setGuestModalVisible(true);
   const closeGuestModal = () => setGuestModalVisible(false);
 
+  const generateIntermediateDates = (start, end) => {
+    let dates = {};
+    let current = new Date(start);
+
+    while (current < new Date(end)) {
+      const formattedDate = current.toISOString().split("T")[0];
+      dates[formattedDate] = { color: "#d3faff", textColor: "black" };
+      current.setDate(current.getDate() + 1);
+    }
+
+    return dates;
+  };
+
   const calculateDays = (start, end) => {
     const startTime = new Date(start).getTime();
     const endTime = new Date(end).getTime();
@@ -161,7 +174,30 @@ const ConfirmAndPayScreen = ({ route, navigation }) => {
           </View>
 
           {/* Book Now Button */}
-          <TouchableOpacity style={styles.bookButton}>
+          <TouchableOpacity
+            style={styles.bookButton}
+            onPress={() => {
+              const bookingDetails = {
+                refNumber: Math.random()
+                  .toString(36)
+                  .substr(2, 10)
+                  .toUpperCase(), // Tạo mã ngẫu nhiên
+                date: new Date().toLocaleDateString(), // Ngày hiện tại
+                time: new Date().toLocaleTimeString(), // Giờ hiện tại
+                paymentMethod: paymentMethod, // Phương thức thanh toán
+                guests: `${adultsCount} adults, ${childrenCount} children`, // Số lượng khách
+                tripDates:
+                  startDate && endDate
+                    ? `${startDate} to ${endDate}`
+                    : startDate || "N/A", // Ngày đi
+                totalAmount: totalPrice, // Tổng số tiền
+                userID: product.userID, //
+                productID: product.id, //
+              };
+
+              navigation.navigate("PaymentSuccessScreen", { bookingDetails });
+            }}
+          >
             <Text style={styles.bookButtonText}>Book now</Text>
           </TouchableOpacity>
         </ScrollView>
@@ -172,31 +208,46 @@ const ConfirmAndPayScreen = ({ route, navigation }) => {
             <Text style={styles.modalTitle}>Select Dates</Text>
             <Calendar
               onDayPress={(day) => {
+                const selectedDate = day.dateString;
+
                 if (!startDate || (startDate && endDate)) {
-                  setStartDate(day.dateString);
+                  // Nếu chưa chọn hoặc đã hoàn thành một chu kỳ, bắt đầu lại
+                  setStartDate(selectedDate);
                   setEndDate(null);
                 } else if (startDate && !endDate) {
-                  const isAfterStart =
-                    new Date(day.dateString) > new Date(startDate);
-                  if (isAfterStart) {
-                    setEndDate(day.dateString);
+                  // Nếu đã có startDate nhưng chưa có endDate
+                  if (new Date(selectedDate) > new Date(startDate)) {
+                    setEndDate(selectedDate);
+                  } else {
+                    // Nếu ngày được chọn nhỏ hơn startDate, đặt lại startDate
+                    setStartDate(selectedDate);
+                    setEndDate(null);
                   }
                 }
               }}
               markingType="period"
               markedDates={{
-                [startDate]: {
-                  startingDay: true,
-                  color: "#00bfff",
-                  textColor: "white",
-                },
-                [endDate]: {
-                  endingDay: true,
-                  color: "#00bfff",
-                  textColor: "white",
-                },
+                ...(startDate && {
+                  [startDate]: {
+                    startingDay: true,
+                    color: "#00bfff",
+                    textColor: "white",
+                  },
+                }),
+                ...(endDate && {
+                  [endDate]: {
+                    endingDay: true,
+                    color: "#00bfff",
+                    textColor: "white",
+                  },
+                }),
+                ...(startDate &&
+                  endDate && {
+                    ...generateIntermediateDates(startDate, endDate),
+                  }),
               }}
             />
+
             <TouchableOpacity
               style={styles.confirmButton}
               onPress={handleConfirmDates}
@@ -210,40 +261,50 @@ const ConfirmAndPayScreen = ({ route, navigation }) => {
         <Modal visible={isGuestModalVisible} animationType="slide">
           <View style={styles.modalContainer}>
             <Text style={styles.modalTitle}>How many guests?</Text>
+
+            {/* Adults */}
             <View style={styles.guestRow}>
-              <Text>Adults</Text>
+              <Text style={styles.guestRowText}>Adults</Text>
               <View style={styles.counter}>
                 <TouchableOpacity
+                  style={styles.counterButton}
                   onPress={() => setAdultsCount(Math.max(1, adultsCount - 1))}
                 >
-                  <Text>-</Text>
+                  <Text style={styles.counterButtonText}>-</Text>
                 </TouchableOpacity>
-                <Text>{adultsCount}</Text>
+                <Text style={styles.counterText}>{adultsCount}</Text>
                 <TouchableOpacity
+                  style={styles.counterButton}
                   onPress={() => setAdultsCount(adultsCount + 1)}
                 >
-                  <Text>+</Text>
+                  <Text style={styles.counterButtonText}>+</Text>
                 </TouchableOpacity>
               </View>
             </View>
+
+            {/* Children */}
             <View style={styles.guestRow}>
-              <Text>Children</Text>
+              <Text style={styles.guestRowText}>Children</Text>
               <View style={styles.counter}>
                 <TouchableOpacity
+                  style={styles.counterButton}
                   onPress={() =>
                     setChildrenCount(Math.max(0, childrenCount - 1))
                   }
                 >
-                  <Text>-</Text>
+                  <Text style={styles.counterButtonText}>-</Text>
                 </TouchableOpacity>
-                <Text>{childrenCount}</Text>
+                <Text style={styles.counterText}>{childrenCount}</Text>
                 <TouchableOpacity
+                  style={styles.counterButton}
                   onPress={() => setChildrenCount(childrenCount + 1)}
                 >
-                  <Text>+</Text>
+                  <Text style={styles.counterButtonText}>+</Text>
                 </TouchableOpacity>
               </View>
             </View>
+
+            {/* Confirm Button */}
             <TouchableOpacity
               style={styles.confirmButton}
               onPress={handleConfirmGuests}
@@ -392,27 +453,65 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     marginBottom: 16,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderColor: "#ddd",
+  },
+  guestRowText: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#333",
   },
   counter: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "space-between",
+    width: 120,
+    backgroundColor: "#f9f9f9",
+    borderRadius: 5,
+    borderWidth: 1,
+    borderColor: "#ddd",
+    paddingVertical: 8,
   },
   counterButton: {
-    backgroundColor: "#f1f1f1",
     width: 30,
     height: 30,
+    backgroundColor: "#00bfff",
     borderRadius: 15,
     justifyContent: "center",
     alignItems: "center",
-    marginHorizontal: 8,
   },
-  counterText: {
-    fontSize: 16,
+  counterButtonText: {
+    fontSize: 20,
+    color: "white",
     fontWeight: "bold",
   },
-  guestCount: {
+  counterText: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#333",
+    textAlign: "center",
+  },
+  confirmButton: {
+    backgroundColor: "#00bfff",
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: "center",
+    marginTop: 20,
+    marginHorizontal: 20,
+  },
+  confirmButtonText: {
+    color: "#fff",
+    fontWeight: "bold",
     fontSize: 16,
-    marginHorizontal: 8,
+  },
+  modalTitle: {
+    fontSize: 22,
+    fontWeight: "bold",
+    textAlign: "center",
+    marginBottom: 20,
+    color: "#333",
   },
 });
 
