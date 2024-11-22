@@ -10,6 +10,7 @@ import {
   Image,
   Modal,
   ScrollView,
+  ActivityIndicator,
 } from "react-native";
 import { launchImageLibrary } from "react-native-image-picker";
 
@@ -22,6 +23,8 @@ export default function RegisterAccount({ navigation, route }) {
   const [avatar, setAvatar] = useState(null); // Lưu ảnh đại diện
   const [modalVisible, setModalVisible] = useState(false); // Trạng thái Modal
   const [modalMessage, setModalMessage] = useState(""); // Nội dung Modal
+  const [loading, setLoading] = useState(false); // Trạng thái loading khi đăng ký
+  const [successVisible, setSuccessVisible] = useState(false); // Hiển thị hiệu ứng thành công
 
   const { phoneNumber, countryCode } = route.params;
 
@@ -43,11 +46,12 @@ export default function RegisterAccount({ navigation, route }) {
     setErrors(newErrors);
 
     if (Object.values(newErrors).includes(true)) {
-      setModalMessage("Please fill all the required fields.");
+      setModalMessage("Vui lòng điền đầy đủ thông tin.");
       setModalVisible(true);
       return;
     }
 
+    setLoading(true); // Bắt đầu loading
     try {
       const response = await axios.post("http://localhost:3000/register", {
         phone_number: phoneNumber,
@@ -55,22 +59,23 @@ export default function RegisterAccount({ navigation, route }) {
         username,
         email,
         password,
-        avatar: avatar?.uri, // Chuỗi base64
+        avatar: avatar?.uri,
       });
 
       if (response.status === 201) {
-        setModalMessage("Registration completed successfully!");
-        setModalVisible(true);
+        setSuccessVisible(true); // Hiển thị hiệu ứng thành công
         setTimeout(() => {
-          setModalVisible(false);
-          navigation.navigate("Login2");
-        }, 1500);
+          setSuccessVisible(false);
+          navigation.navigate("Login2"); // Chuyển sang màn hình đăng nhập
+        }, 2000); // Hiệu ứng tồn tại 2 giây
       }
     } catch (error) {
       const errorMsg =
-        error.response?.data?.error || "Failed to register user.";
+        error.response?.data?.error || "Đăng ký không thành công.";
       setModalMessage(errorMsg);
       setModalVisible(true);
+    } finally {
+      setLoading(false); // Tắt loading
     }
   };
 
@@ -299,24 +304,39 @@ export default function RegisterAccount({ navigation, route }) {
             </View>
 
             <View style={{ marginTop: 25, marginLeft: 20, paddingBottom: 20 }}>
-              <TouchableOpacity
-                style={{
-                  backgroundColor: "#33CCFF",
-                  borderRadius: 10,
-                  width: "95%",
-                  height: 50,
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-                onPress={handleContinue}
-              >
-                <Text style={{ fontSize: 20, color: "white" }}>Register</Text>
-              </TouchableOpacity>
+              {loading ? (
+                <ActivityIndicator size="large" color="#33CCFF" />
+              ) : (
+                <TouchableOpacity
+                  style={{
+                    backgroundColor: "#33CCFF",
+                    borderRadius: 10,
+                    width: "95%",
+                    height: 50,
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                  onPress={handleContinue}
+                >
+                  <Text style={{ fontSize: 20, color: "white" }}>Register</Text>
+                </TouchableOpacity>
+              )}
             </View>
           </View>
         </View>
       </View>
 
+      {/* Hiển thị hiệu ứng Thành Công */}
+      {successVisible && (
+        <View style={styles.successContainer}>
+          <Image
+            source={require("../Image/login/success.png")} // Đường dẫn hình ảnh thành công
+            style={styles.successImage}
+          />
+          <Text style={styles.successText}>Đăng ký thành công!</Text>
+        </View>
+      )}
+      {/* Modal hiển thị thông báo lỗi */}
       <Modal visible={modalVisible} transparent={true} animationType="slide">
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
@@ -336,7 +356,7 @@ export default function RegisterAccount({ navigation, route }) {
 
 const styles = StyleSheet.create({
   input: {
-    backgroundColor: "#EEEEEE",
+    backgroundColor: "#F9F9F9",
     height: 50,
     borderWidth: 1,
     marginBottom: 20,
@@ -345,6 +365,8 @@ const styles = StyleSheet.create({
     width: "95%",
     fontSize: 18,
     paddingLeft: 50,
+    borderRadius: 10,
+    borderColor: "#D3D3D3", 
   },
   modalContainer: {
     flex: 1,
@@ -372,5 +394,29 @@ const styles = StyleSheet.create({
   modalButtonText: {
     color: "white",
     fontSize: 16,
+  },
+  successContainer: {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: [{ translateX: -100 }, { translateY: -100 }],
+    alignItems: "center",
+    backgroundColor: "#fff",
+    padding: 30,
+    borderRadius: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+  },
+  successImage: {
+    width: 80,
+    height: 80,
+    marginBottom: 10,
+  },
+  successText: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#33CCFF",
   },
 });

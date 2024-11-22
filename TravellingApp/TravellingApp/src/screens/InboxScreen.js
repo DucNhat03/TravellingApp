@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
     margin: 0,
     padding: 0,
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#FAF0E6",
   },
   scrollContainer: {
     flex: 1,

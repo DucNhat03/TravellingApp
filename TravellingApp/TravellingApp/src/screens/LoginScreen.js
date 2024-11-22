@@ -13,6 +13,7 @@ import {
 import { Button, Icon } from 'react-native-elements';
 import ModalDropdown from 'react-native-modal-dropdown';
 import axios from 'axios';
+import { LinearGradient } from 'expo-linear-gradient';
 
 const LoginScreen = ({ navigation }) => {
   const [countryCode, setCountryCode] = useState(null);
@@ -83,6 +84,10 @@ const LoginScreen = ({ navigation }) => {
   );
 
   return (
+    <LinearGradient
+      colors={['#CD5C5C', '#FFFAFA']}
+      style={styles.gradientBackground}
+    >
     <ScrollView contentContainerStyle={styles.scrollViewContainer}>
       <View style={styles.container}>
         <Text style={styles.title}>Create an account</Text>
@@ -174,10 +179,14 @@ const LoginScreen = ({ navigation }) => {
         </View>
       </Modal>
     </ScrollView>
+    </LinearGradient>
   );
 };
 
 const styles = StyleSheet.create({
+   gradientBackground: {
+    flex: 1,
+  },
   scrollViewContainer: {
     flexGrow: 1,
   },
@@ -233,16 +242,18 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   input: {
+    backgroundColor: "#F9F9F9",
     flex: 1,
     height: 42,
     borderWidth: 1,
-    borderColor: '#ccc',
     borderRadius: 5,
     paddingLeft: 10,
+    borderColor: "#D3D3D3",
   },
   continueButton: {
     backgroundColor: '#00C2F3',
     marginVertical: 20,
+    borderRadius: 10,
   },
   orText: {
     alignSelf: 'center',
@@ -251,10 +262,11 @@ const styles = StyleSheet.create({
     opacity: 0.6,
   },
   authButton: {
+    backgroundColor: "#F9F9F9",
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: '#D3D3D3',
     borderRadius: 5,
     padding: 10,
     marginVertical: 5,

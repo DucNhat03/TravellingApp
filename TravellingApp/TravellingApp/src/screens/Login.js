@@ -49,7 +49,7 @@ export default function Login({ navigation }) {
           setModalVisible(true);
           setTimeout(() => {
             setModalVisible(false);
-            navigation.navigate("AdminHome", { profile: userData });
+            navigation.navigate("AdminHome", { username: userData.user.username });
           }, 1500);
         } else {
           setModalMessage("Đăng nhập thành công!");
@@ -97,7 +97,7 @@ export default function Login({ navigation }) {
       {/* Header image */}
       <View style={styles.imageContainer}>
         <Image
-          source={require("../Image/homescreen/ApartmentinOmaha.png")}
+          source={require("../Image/login/banner.png")}
           style={styles.headerImage}
           resizeMode="cover"
         />
@@ -204,7 +204,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     justifyContent: "space-between",
     alignItems: "center",
-    backgroundColor: "white",
+    backgroundColor: "#fff", // Màu nền xanh nhạt
     flex: 1,
   },
   backButton: {
@@ -212,22 +212,18 @@ const styles = StyleSheet.create({
     marginTop: 20,
     width: 25,
     height: 25,
-    paddingBottom: 10,
   },
   imageContainer: {
-    width: "90%",
+    width: "92%", // Chiếm nhiều không gian hơn
     alignItems: "center",
     marginTop: 30,
-    borderWidth: 5,
-    borderRadius: 35,
-    borderColor: "#fff",
+    borderRadius: 20, // Giảm độ bo góc
     overflow: "hidden",
   },
   headerImage: {
     width: "100%",
-    height: 220,
-    borderRadius: 30,
-    padding: 5,
+    height: 250, // Tăng chiều cao để nổi bật
+    borderRadius: 20,
   },
   formContainer: {
     width: "100%",
@@ -270,9 +266,9 @@ const styles = StyleSheet.create({
     top: 8,
   },
   input: {
-    backgroundColor: "#EEEEEE",
+    backgroundColor: "#F9F9F9", // Màu nền sáng hơn
     height: 50,
-    borderColor: "#EEEEEE",
+    borderColor: "#D3D3D3", // Màu viền nhẹ hơn
     borderWidth: 1,
     marginBottom: 10,
     paddingHorizontal: 10,
@@ -280,7 +276,7 @@ const styles = StyleSheet.create({
     width: "95%",
     fontSize: 18,
     paddingLeft: 50,
-    borderRadius: 5,
+    borderRadius: 15, // Độ bo góc lớn
   },
   errorText: {
     color: "red",
@@ -323,8 +319,9 @@ const styles = StyleSheet.create({
   modalContent: {
     backgroundColor: "white",
     padding: 20,
-    borderRadius: 10,
+    borderRadius: 15, // Bo góc modal
     alignItems: "center",
+    width: 300, // Tăng chiều rộng modal
   },
   modalMessage: {
     fontSize: 16,
@@ -334,10 +331,11 @@ const styles = StyleSheet.create({
   modalButton: {
     backgroundColor: "#33CCFF",
     padding: 10,
-    borderRadius: 5,
+    borderRadius: 10,
   },
   modalButtonText: {
     color: "white",
     fontSize: 16,
   },
 });
+

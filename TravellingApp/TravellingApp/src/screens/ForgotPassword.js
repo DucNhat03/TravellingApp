@@ -183,12 +183,14 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   input: {
-    backgroundColor: "#EEEEEE",
+    backgroundColor: "#F9F9F9",
     height: 50,
     borderWidth: 1,
     marginBottom: 20,
     paddingHorizontal: 10,
     fontSize: 18,
+    borderRadius: 10,
+    borderColor: "#D3D3D3",
   },
   eyeButton: {
     position: "absolute",

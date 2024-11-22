@@ -249,7 +249,7 @@ const styles = StyleSheet.create({
     width: "100%",
     margin: 0,
     padding: 0,
-    backgroundColor: "#E0FFFF",
+    backgroundColor: "#FAF0E6",
   },
   ScrollViewContainer: {
     backgroundColor: "#fff",

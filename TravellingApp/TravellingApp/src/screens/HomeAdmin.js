@@ -1,13 +1,14 @@
 import React from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 
-export default function AdminHome({ navigation }) {
+export default function AdminHome({ navigation, route }) {
+  
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Admin Dashboard</Text>
       <TouchableOpacity
         style={styles.button}
-        onPress={() => navigation.navigate('AdminProductManagement')}
+        onPress={() => navigation.navigate('AdminProductManagement', {username: route.params?.username})}
       >
         <Text style={styles.buttonText}>Manage Products</Text>
       </TouchableOpacity>

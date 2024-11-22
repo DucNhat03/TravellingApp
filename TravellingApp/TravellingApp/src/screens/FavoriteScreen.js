@@ -112,7 +112,7 @@ const FavoritesScreen = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#FAF0E6",
   },
   scrollContainer: {
     flex: 1,

@@ -87,9 +87,12 @@ const ConfirmAndPayScreen = ({ route, navigation }) => {
         <ScrollView style={styles.container}>
           {/* Room Information */}
           <View style={styles.roomInfo}>
-            <Text style={styles.price}>${product?.price || 0}/night</Text>
-            <Text style={styles.roomName}>{product?.name || "Room Name"}</Text>
-            <Text style={styles.rating}>⭐ {product?.rating || 0}</Text>
+            <View>
+              <Text style={styles.roomName}>{product?.name || "Room Name"}</Text>
+              <Text style={styles.rating}>⭐ {product?.rating || 0}</Text>
+              <Text style={styles.price}>${product?.price || 0}/night</Text>
+            </View>
+            
             <Image
               source={{
                 uri: product?.image_url || "https://via.placeholder.com/150",

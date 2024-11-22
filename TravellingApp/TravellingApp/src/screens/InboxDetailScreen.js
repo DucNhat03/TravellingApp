@@ -138,6 +138,7 @@ const styles = StyleSheet.create({
   messageContainer: {
     flex: 1,
     padding: 10,
+    backgroundColor: '#FFC0CB'
   },
   messageWrapper: {
     marginVertical: 5,
@@ -152,17 +153,18 @@ const styles = StyleSheet.create({
     maxWidth: "80%",
     padding: 10,
     borderRadius: 10,
+    backgroundColor: '#FF1493',
   },
   messageText: {
     fontSize: 16,
-    color: "#000",
+    color: "#FFFFFF",
   },
   outgoingText: {
     color: "#fff", // Màu chữ cho tin nhắn gửi đi
   },
   messageTime: {
     fontSize: 12,
-    color: "#bbb",
+    color: "#E0FFFF",
     marginTop: 5,
     alignSelf: "flex-end",
   },
