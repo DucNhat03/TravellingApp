@@ -199,20 +199,58 @@ app.get('/users/:userId', (req, res) => {
 app.put('/users/:id', (req, res) => {
   const userId = req.params.id;
   const { username, email, phone_number, country_code, avatar_url } = req.body;
-  const sql = `UPDATE users SET username = ?, email = ?, phone_number = ?, country_code = ?, avatar_url = ? WHERE id = ?`;
 
-  db.query(
-    sql,
-    [username, email, phone_number, country_code, avatar_url, userId],
-    (err, result) => {
-      if (err) {
-        console.error('Database Error:', err);
-        return res.status(500).json({ error: 'Database error' });
-      }
-      res.status(200).json({ message: 'Profile updated successfully' });
+  if (!userId) {
+    return res.status(400).json({ error: 'User ID is required' });
+  }
+
+  // Xây dựng query động
+  const fieldsToUpdate = [];
+  const values = [];
+
+  if (username) {
+    fieldsToUpdate.push('username = ?');
+    values.push(username);
+  }
+  if (email) {
+    fieldsToUpdate.push('email = ?');
+    values.push(email);
+  }
+  if (phone_number) {
+    fieldsToUpdate.push('phone_number = ?');
+    values.push(phone_number);
+  }
+  if (country_code) {
+    fieldsToUpdate.push('country_code = ?');
+    values.push(country_code);
+  }
+  if (avatar_url) {
+    fieldsToUpdate.push('avatar_url = ?');
+    values.push(avatar_url);
+  }
+
+  if (fieldsToUpdate.length === 0) {
+    return res.status(400).json({ error: 'No valid fields provided for update' });
+  }
+
+  values.push(userId);
+
+  const sql = `UPDATE users SET ${fieldsToUpdate.join(', ')} WHERE id = ?`;
+
+  db.query(sql, values, (err, result) => {
+    if (err) {
+      console.error('Database Error:', err.message);
+      return res.status(500).json({ error: 'Database error' });
     }
-  );
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    res.status(200).json({ message: 'User updated successfully' });
+  });
 });
+
 
 // API cập nhật mật khẩu bằng email
 app.patch('/users', async (req, res) => {
@@ -491,6 +529,21 @@ app.post('/bookings', (req, res) => {
   });
 });
 
+app.get('/products/:id', (req, res) => {
+  const productId = req.params.id;
+
+  const sql = 'SELECT * FROM products WHERE id = ?';
+  db.query(sql, [productId], (err, results) => {
+    if (err) {
+      console.error('Database Error:', err.message);
+      return res.status(500).json({ error: 'Database error' });
+    }
+    if (results.length === 0) {
+      return res.status(404).json({ error: 'Product not found' });
+    }
+    res.status(200).json(results[0]);
+  });
+});
 
 
 
