@@ -8,8 +8,10 @@ import {
   Modal,
   ScrollView,
 } from "react-native";
-
-export default function AddProductModal({ visible, onClose, onSave, navigation }) {
+import { useNavigation } from "@react-navigation/native";
+import { Picker } from "@react-native-picker/picker";
+export default function AddProductModal({ visible, onClose, onSave }) {
+  const navigation = useNavigation(); // Lấy đối tượng navigation từ context
   const [product, setProduct] = useState({
     name: "",
     category: "",
@@ -41,7 +43,7 @@ export default function AddProductModal({ visible, onClose, onSave, navigation }
       showNotification("Please fill in all required fields.");
       return;
     }
-    onSave(product);
+    onSave(product); // Gọi hàm lưu sản phẩm
     setProduct({
       name: "",
       category: "",
@@ -51,6 +53,10 @@ export default function AddProductModal({ visible, onClose, onSave, navigation }
       description: "",
     });
     showNotification("Product added successfully.");
+    setTimeout(() => {
+      onClose(); // Đóng modal
+      navigation.navigate("AdminProductManagement"); // Điều hướng về màn hình quản lý sản phẩm
+    }, 1500); // Thêm thời gian chờ ngắn để hiển thị thông báo
   };
 
   return (
@@ -66,12 +72,18 @@ export default function AddProductModal({ visible, onClose, onSave, navigation }
               value={product.name}
               onChangeText={(text) => handleInputChange("name", text)}
             />
-            <TextInput
-              style={styles.input}
-              placeholder="Category"
-              value={product.category}
-              onChangeText={(text) => handleInputChange("category", text)}
-            />
+            <Picker
+              selectedValue={product.category}
+              style={styles.picker}
+              onValueChange={(itemValue) =>
+                handleInputChange("category", itemValue)
+              }
+            >
+              <Picker.Item label="Select Category" value="" />
+              <Picker.Item label="Camping" value="Camping" />
+              <Picker.Item label="Mountain" value="Mountain" />
+              <Picker.Item label="Beach" value="Beach" />
+            </Picker>
             <TextInput
               style={styles.input}
               placeholder="Price"
@@ -222,5 +234,14 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textAlign: "center",
     marginBottom: 10,
+  },
+  picker: {
+    borderWidth: 1,
+    borderColor: "#ddd",
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    marginBottom: 15,
+    backgroundColor: "#fff",
   },
 });
