@@ -89,7 +89,7 @@ const BookingScreen = ({navigation}) => {
         {/* Back to Home Button */}
         <TouchableOpacity
           style={styles.homeButton}
-          onPress={() => navigation.navigate("Home")} // Điều hướng về màn hình Home
+          onPress={() => navigation.goBack()} // Điều hướng về màn hình Home
         >
           <Text style={styles.homeButtonText}>Back to Home</Text>
         </TouchableOpacity>
