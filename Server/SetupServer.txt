@@ -1,3 +1,21 @@
+------------------------------------ Tao project
+npm install -g expo-cli
+expo init myApp -> chon temPlate --blank
+cd myApp
+--> npm run web: hien loi !
+
+-> npm install react-native-web@~0.19.10 react-dom@18.2.0 @expo/metro-runtime@~3.2.3
+
+--> Nếu lỗi version > 17:  		-- > npm install -g expo-cli --force
+
+
+------------------------------------ Tao project
+npx create-expo-app YOUR_PROJECT --template blank
+cd myApp
+- npx expo install react-dom react-native-web @expo/metro-runtime
+- npm run web
+
+
 --
 npm init -y
 npm install express mysql body-parser cors
