@@ -85,7 +85,7 @@ const LoginScreen = ({ navigation }) => {
 
   return (
     <LinearGradient
-      colors={['#CD5C5C', '#FFFAFA']}
+      colors={['#FFFEFF', '#dfe9f3']}
       style={styles.gradientBackground}
     >
     <ScrollView contentContainerStyle={styles.scrollViewContainer}>
@@ -186,6 +186,7 @@ const LoginScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
    gradientBackground: {
     flex: 1,
+    width: "100%",
   },
   scrollViewContainer: {
     flexGrow: 1,
@@ -193,7 +194,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#fff',
     justifyContent: 'center',
   },
   title: {

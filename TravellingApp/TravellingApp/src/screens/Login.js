@@ -10,6 +10,7 @@ import {
   SafeAreaView,
   Modal,
 } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
 
 export default function Login({ navigation }) {
   const [email, setEmail] = useState("");
@@ -45,11 +46,13 @@ export default function Login({ navigation }) {
         const userData = response.data;
 
         if (userData.user && userData.user.role === "admin") {
-          setModalMessage("Đăng nhập với tư cách Admin!"); 
+          setModalMessage("Đăng nhập với tư cách Admin!");
           setModalVisible(true);
           setTimeout(() => {
             setModalVisible(false);
-            navigation.navigate("AdminHome", { username: userData.user.username });
+            navigation.navigate("AdminHome", {
+              username: userData.user.username,
+            });
           }, 1500);
         } else {
           setModalMessage("Đăng nhập thành công!");
@@ -69,8 +72,8 @@ export default function Login({ navigation }) {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Modal hiển thị thông báo */}
-      <Modal visible={modalVisible} transparent={true} animationType="slide">
+      {/* Modal thông báo */}
+      <Modal visible={modalVisible} transparent={true} animationType="fade">
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <Text style={styles.modalMessage}>{modalMessage}</Text>
@@ -84,174 +87,180 @@ export default function Login({ navigation }) {
         </View>
       </Modal>
 
-      {/* Back button */}
-      <View style={{ width: "100%" }}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Image
-            source={require("../Image/dataicon/backicon.png")}
-            style={styles.backButton}
-          />
-        </TouchableOpacity>
-      </View>
-
-      {/* Header image */}
-      <View style={styles.imageContainer}>
+      {/* Nút quay lại */}
+      <TouchableOpacity
+        style={styles.backButton}
+        onPress={() => navigation.goBack()}
+      >
         <Image
-          source={require("../Image/login/banner.png")}
-          style={styles.headerImage}
-          resizeMode="cover"
+          source={require("../Image/dataicon/backicon.png")}
+          style={styles.backIcon}
         />
-      </View>
+      </TouchableOpacity>
 
-      {/* Form container */}
-      <View style={styles.formContainer}>
-        <View style={styles.welcomeContainer}>
-          <Text style={styles.welcomeText}>Welcome!</Text>
+      <LinearGradient
+        colors={["#FFFEFF", "#dfe9f3"]}
+        style={styles.gradientBackground}
+      >
+        {/* Hình ảnh tiêu đề */}
+        <View style={styles.imageContainer}>
+          <Image
+            source={require("../Image/login/banner.png")}
+            style={styles.headerImage}
+            resizeMode="cover"
+          />
         </View>
 
-        {/* Input email */}
-        <View style={styles.inputContainer}>
-          <Image
-            source={require("../Image/login/email.png")}
-            style={styles.icon}
-          />
-          <TextInput
-            placeholder={
-              errors.email ? "Email is required" : "Enter your email"
-            }
-            style={[
-              styles.input,
-              { borderColor: errors.email ? "red" : "#EEEEEE" },
-            ]}
-            value={email}
-            onChangeText={setEmail}
-          />
-          {errors.email && (
-            <Text style={styles.errorText}>Please enter your email.</Text>
-          )}
-        </View>
+        {/* Form đăng nhập */}
+        <View style={styles.formContainer}>
+          <Text style={styles.title}>Welcome to MyApp!</Text>
 
-        {/* Input password */}
-        <View style={styles.inputContainer}>
-          <Image
-            source={require("../Image/login/lock.png")}
-            style={styles.icon}
-          />
-          <TouchableOpacity
-            style={styles.eyeButton}
-            onPress={() => setIsChecked3(!isChecked3)}
-          >
+          {/* Nhập email */}
+          <View style={styles.inputWrapper}>
             <Image
-              source={require("../Image/login/eye.png")}
-              style={[
-                styles.eyeIcon,
-                { transform: [{ rotate: isChecked3 ? "0deg" : "180deg" }] },
-              ]}
+              source={require("../Image/login/email.png")}
+              style={styles.iconEmail}
             />
-          </TouchableOpacity>
-          <TextInput
-            placeholder={
-              errors.password ? "Password is required" : "Enter your password"
-            }
-            secureTextEntry={!isChecked3}
-            style={[
-              styles.input,
-              { borderColor: errors.password ? "red" : "#EEEEEE" },
-            ]}
-            value={password}
-            onChangeText={setPassword}
-          />
-          {errors.password && (
-            <Text style={styles.errorText}>Please enter your password.</Text>
+            <TextInput
+              placeholder={
+                errors.email ? "Email is required" : "Enter your email"
+              }
+              style={[styles.input, errors.email && styles.inputError]}
+              value={email}
+              onChangeText={setEmail}
+            />
+          </View>
+
+          {/* Nhập mật khẩu */}
+          <View style={styles.inputWrapper}>
+            <Image
+              source={require("../Image/login/lock.png")}
+              style={styles.icon}
+            />
+            <TextInput
+              placeholder={
+                errors.password ? "Password is required" : "Enter your password"
+              }
+              secureTextEntry={!isChecked3}
+              style={[styles.input, errors.password && styles.inputError]}
+              value={password}
+              onChangeText={setPassword}
+            />
+            <TouchableOpacity
+              style={styles.eyeButton}
+              onPress={() => setIsChecked3(!isChecked3)}
+            >
+              <Image
+                source={require("../Image/login/eye.png")}
+                style={styles.eyeIcon}
+              />
+            </TouchableOpacity>
+          </View>
+
+          {/* Lỗi đăng nhập */}
+          {errors.invalidLogin && (
+            <Text style={styles.errorText}>
+              Email hoặc mật khẩu không chính xác.
+            </Text>
           )}
-        </View>
 
-        {/* Error invalid login */}
-        {errors.invalidLogin && (
-          <Text style={styles.errorText}>
-            Incorrect email or password. Please try again.
-          </Text>
-        )}
-
-        {/* Forgot password link */}
-        <View style={styles.forgotPasswordContainer}>
+          {/* Quên mật khẩu */}
           <TouchableOpacity
-            onPress={() => {
-              navigation.navigate("ForgotPassword");
-            }}
+            onPress={() => navigation.navigate("ForgotPassword")}
           >
             <Text style={styles.forgotPasswordText}>Forgot password?</Text>
           </TouchableOpacity>
-        </View>
 
-        {/* Login button */}
-        <View style={styles.loginButtonContainer}>
-          <TouchableOpacity
-            style={styles.loginButton}
-            onPress={handleLogin}
-          >
+          {/* Nút đăng nhập */}
+          <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
             <Text style={styles.loginButtonText}>Login</Text>
           </TouchableOpacity>
         </View>
-      </View>
+      </LinearGradient>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    width: "100%",
-    flexDirection: "column",
-    justifyContent: "space-between",
-    alignItems: "center",
-    backgroundColor: "#fff", // Màu nền xanh nhạt
     flex: 1,
+    backgroundColor: "#f9f9f9",
+  },
+  gradientBackground: {
+    flex: 1,
+    width: "100%",
   },
   backButton: {
-    marginLeft: 20,
-    marginTop: 20,
-    width: 25,
-    height: 25,
+    position: "absolute",
+    top: 30,
+    left: 15,
+    zIndex: 10,
+    backgroundColor: "rgba(0,0,0,0.2)",
+    padding: 5,
+    borderRadius: 20,
+    alignItems: "center",
+  },
+  backIcon: {
+    width: 20,
+    height: 20,
   },
   imageContainer: {
-    width: "92%", // Chiếm nhiều không gian hơn
-    alignItems: "center",
-    marginTop: 30,
-    borderRadius: 20, // Giảm độ bo góc
+    width: "100%",
+    height: 200,
+    borderBottomLeftRadius: 50,
+    borderBottomRightRadius: 50,
     overflow: "hidden",
   },
   headerImage: {
     width: "100%",
-    height: 250, // Tăng chiều cao để nổi bật
-    borderRadius: 20,
+    height: "100%",
   },
   formContainer: {
-    width: "100%",
-    backgroundColor: "white",
-    height: 800,
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10,
+    flex: 1,
+    padding: 20,
+    marginTop: 0,
+    borderRadius: 30,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    elevation: 5,
   },
-  welcomeContainer: {
-    marginTop: 10,
-    marginLeft: 20,
-  },
-  welcomeText: {
-    fontSize: 30,
+  title: {
+    fontSize: 24,
     fontWeight: "bold",
+    textAlign: "center",
+    marginBottom: 20,
   },
-  inputContainer: {
-    marginTop: 10,
-    marginLeft: 20,
-    borderRadius: 15,
+  inputWrapper: {
+    position: "relative",
+    marginBottom: 20,
+  },
+  iconEmail: {
+    position: "absolute",
+    left: 10,
+    top: 15,
+    width: 20,
+    height: 20,
+    resizeMode: "contain",
   },
   icon: {
-    width: 25,
-    height: 25,
-    resizeMode: "contain",
-    marginLeft: 10,
-    marginTop: 23,
     position: "absolute",
+    left: 10,
+    top: 15,
+    width: 20,
+    height: 20,
+  },
+  input: {
+    height: 50,
+    borderWidth: 1,
+    borderColor: "#ddd",
+    borderRadius: 10,
+    paddingLeft: 40,
+    fontSize: 16,
+    backgroundColor: "#f9f9f9",
+  },
+  inputError: {
+    borderColor: "red",
   },
   eyeButton: {
     position: "absolute",
@@ -259,69 +268,43 @@ const styles = StyleSheet.create({
     top: 15,
   },
   eyeIcon: {
-    width: 25,
-    height: 25,
-    resizeMode: "contain",
-    right: 20,
-    top: 8,
-  },
-  input: {
-    backgroundColor: "#F9F9F9", // Màu nền sáng hơn
-    height: 50,
-    borderColor: "#D3D3D3", // Màu viền nhẹ hơn
-    borderWidth: 1,
-    marginBottom: 10,
-    paddingHorizontal: 10,
-    marginTop: 10,
-    width: "95%",
-    fontSize: 18,
-    paddingLeft: 50,
-    borderRadius: 15, // Độ bo góc lớn
-  },
-  errorText: {
-    color: "red",
-    fontSize: 12,
-    marginLeft: 10,
-    marginTop: -15,
-    marginBottom: 10,
-  },
-  forgotPasswordContainer: {
-    width: "95%",
-    alignItems: "flex-end",
-    marginBottom: 20,
+    width: 20,
+    height: 20,
   },
   forgotPasswordText: {
-    color: "#33CCFF",
-  },
-  loginButtonContainer: {
-    marginTop: 20,
-    marginLeft: 20,
+    textAlign: "right",
+    color: "#007bff",
+    marginBottom: 20,
   },
   loginButton: {
-    backgroundColor: "#33CCFF",
+    backgroundColor: "#007bff",
     borderRadius: 10,
-    width: "95%",
-    height: 50,
-    justifyContent: "center",
+    padding: 15,
     alignItems: "center",
   },
   loginButtonText: {
-    fontSize: 20,
+    color: "#fff",
+    fontSize: 18,
     fontWeight: "bold",
-    color: "white",
+  },
+  errorText: {
+    color: "red",
+    fontSize: 14,
+    textAlign: "center",
+    marginBottom: 10,
   },
   modalContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(0,0,0,0.5)",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalContent: {
-    backgroundColor: "white",
+    width: 300,
+    backgroundColor: "#fff",
     padding: 20,
-    borderRadius: 15, // Bo góc modal
+    borderRadius: 15,
     alignItems: "center",
-    width: 300, // Tăng chiều rộng modal
   },
   modalMessage: {
     fontSize: 16,
@@ -329,13 +312,12 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   modalButton: {
-    backgroundColor: "#33CCFF",
+    backgroundColor: "#007bff",
     padding: 10,
     borderRadius: 10,
   },
   modalButtonText: {
-    color: "white",
+    color: "#fff",
     fontSize: 16,
   },
 });
-

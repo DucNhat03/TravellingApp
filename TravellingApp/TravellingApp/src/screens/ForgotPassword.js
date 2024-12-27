@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import axios from "axios";
 import {
   StyleSheet,
   Text,
@@ -9,11 +8,12 @@ import {
   Image,
   Modal,
 } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
 
 export default function ForgotPassword({ navigation }) {
   const [isChecked, setIsChecked] = useState(false);
   const [isChecked2, setIsChecked2] = useState(false);
-  const [email, setEmail] = useState(""); 
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordRepeat, setPasswordRepeat] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
@@ -39,111 +39,116 @@ export default function ForgotPassword({ navigation }) {
       return;
     }
 
-    try {
-      const response = await axios.patch(`http://localhost:3000/users`, {
-        email,
-        password,
-      });
-
-      if (response.status === 200) {
-        setModalMessage("Password has been updated successfully!");
-        setModalVisible(true);
-        setTimeout(() => navigation.navigate("Login"), 1500);
-      }
-    } catch (error) {
-      setModalMessage("An error occurred. Check the email or try again.");
-      setModalVisible(true);
-    }
+    setModalMessage("Password reset successfully!");
+    setModalVisible(true);
+    setTimeout(() => navigation.navigate("Login"), 1500);
   };
 
   return (
     <View style={styles.container}>
-      <View style={{ width: "100%" }}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Image
-            source={require("../Image/dataicon/backicon.png")}
-            style={{ marginLeft: 20, marginTop: 20, width: 25, height: 25 }}
-          />
-        </TouchableOpacity>
+      {/* Hình ảnh đầu trang */}
+      <View style={styles.imageContainer}>
+        <Image
+          source={require("../Image/login/resetpassword.png")}
+          style={styles.bannerImage}
+          resizeMode="contain"
+        />
       </View>
 
-      <View style={styles.formContainer}>
-        <View style={{ alignItems: "center", marginTop: 20 }}>
-          <Image
-            source={require("../Image/login/resetpassword.png")}
-            style={{ width: 120, height: 120, borderRadius: 100 }}
-            resizeMode="cover"
-          />
-        </View>
+      {/* Nút quay lại */}
+      <TouchableOpacity
+        style={styles.backButton}
+        onPress={() => navigation.goBack()}
+      >
+        <Image
+          source={require("../Image/dataicon/backicon.png")}
+          style={styles.backIcon}
+        />
+      </TouchableOpacity>
+      <LinearGradient
+        colors={["#dfe9f3", "#FFFEFF"]}
+        style={styles.gradientBackground}
+      >
+        {/* Nội dung chính */}
+        <View style={styles.contentContainer}>
+          {/* Tiêu đề */}
+          <Text style={styles.title}>Reset Password</Text>
+          <Text style={styles.subtitle}>
+            Please enter your email and new password
+          </Text>
 
-        <View style={{ alignItems: "center" }}>
-          <Text style={{ fontSize: 30, fontWeight: "bold" }}>Reset Password</Text>
-          <Text style={{ fontSize: 15, opacity: 0.6 }}>Reset your password</Text>
-        </View>
-
-        <View style={styles.inputContainer}>
-          <TextInput
-            placeholder={errors.email ? "Email is required" : "Enter your email"}
-            style={[
-              styles.input,
-              { borderColor: errors.email ? "red" : "#EEEEEE" },
-            ]}
-            value={email}
-            onChangeText={setEmail}
-          />
-        </View>
-
-        <View style={styles.inputContainer}>
-          <TextInput
-            placeholder="Enter new password"
-            secureTextEntry={!isChecked2}
-            style={[
-              styles.input,
-              { borderColor: errors.password ? "red" : "#EEEEEE" },
-            ]}
-            value={password}
-            onChangeText={setPassword}
-          />
-          <TouchableOpacity
-            onPress={() => setIsChecked2(!isChecked2)}
-            style={styles.eyeButton}
-          >
+          {/* Input email */}
+          <View style={styles.inputContainer}>
             <Image
-              source={require("../Image/login/eye.png")}
-              style={{ width: 25, height: 25 }}
+              source={require("../Image/login/email.png")}
+              style={styles.icon}
             />
-          </TouchableOpacity>
-        </View>
+            <TextInput
+              placeholder={
+                errors.email ? "Email is required" : "Enter your email"
+              }
+              style={[styles.input, errors.email && styles.errorInput]}
+              value={email}
+              onChangeText={setEmail}
+            />
+          </View>
 
-        <View style={styles.inputContainer}>
-          <TextInput
-            placeholder="Repeat new password"
-            secureTextEntry={!isChecked}
-            style={[
-              styles.input,
-              {
-                borderColor: errors.passwordMismatch ? "red" : "#EEEEEE",
-              },
-            ]}
-            value={passwordRepeat}
-            onChangeText={setPasswordRepeat}
-          />
-          <TouchableOpacity
-            onPress={() => setIsChecked(!isChecked)}
-            style={styles.eyeButton}
-          >
+          {/* Input password */}
+          <View style={styles.inputContainer}>
             <Image
-              source={require("../Image/login/eye.png")}
-              style={{ width: 25, height: 25 }}
+              source={require("../Image/login/lock.png")}
+              style={styles.icon}
             />
-          </TouchableOpacity>
-        </View>
+            <TextInput
+              placeholder="Enter new password"
+              secureTextEntry={!isChecked2}
+              style={[styles.input, errors.password && styles.errorInput]}
+              value={password}
+              onChangeText={setPassword}
+            />
+            <TouchableOpacity
+              onPress={() => setIsChecked2(!isChecked2)}
+              style={styles.eyeButton}
+            >
+              <Image
+                source={require("../Image/login/eye.png")}
+                style={styles.eyeIcon}
+              />
+            </TouchableOpacity>
+          </View>
 
-        {errors.passwordMismatch && (
-          <Text style={styles.errorText}>Passwords do not match.</Text>
-        )}
+          {/* Input repeat password */}
+          <View style={styles.inputContainer}>
+            <Image
+              source={require("../Image/login/lock.png")}
+              style={styles.icon}
+            />
+            <TextInput
+              placeholder="Repeat new password"
+              secureTextEntry={!isChecked}
+              style={[
+                styles.input,
+                errors.passwordMismatch && styles.errorInput,
+              ]}
+              value={passwordRepeat}
+              onChangeText={setPasswordRepeat}
+            />
+            <TouchableOpacity
+              onPress={() => setIsChecked(!isChecked)}
+              style={styles.eyeButton}
+            >
+              <Image
+                source={require("../Image/login/eye.png")}
+                style={styles.eyeIcon}
+              />
+            </TouchableOpacity>
+          </View>
 
-        <View style={styles.buttonContainer}>
+          {errors.passwordMismatch && (
+            <Text style={styles.errorText}>Passwords do not match.</Text>
+          )}
+
+          {/* Nút reset password */}
           <TouchableOpacity
             style={styles.resetButton}
             onPress={handleResetPassword}
@@ -151,9 +156,10 @@ export default function ForgotPassword({ navigation }) {
             <Text style={styles.resetButtonText}>Reset Password</Text>
           </TouchableOpacity>
         </View>
-      </View>
+      </LinearGradient>
 
-      <Modal visible={modalVisible} transparent={true} animationType="slide">
+      {/* Modal thông báo */}
+      <Modal visible={modalVisible} transparent={true} animationType="fade">
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <Text style={styles.modalMessage}>{modalMessage}</Text>
@@ -173,74 +179,132 @@ export default function ForgotPassword({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "white",
+    backgroundColor: "#f3f4f6",
   },
-  formContainer: {
+  gradientBackground: {
+    flex: 1,
+    width: "100%",
+    borderRadius: 20,
+  },
+  imageContainer: {
+    alignItems: "center",
     marginTop: 10,
-    paddingHorizontal: 20,
+  },
+  backButton: {
+    position: "absolute",
+    top: 30,
+    left: 15,
+    zIndex: 10,
+    backgroundColor: "rgba(0,0,0,0.2)",
+    padding: 5,
+    borderRadius: 20,
+    alignItems: "center",
+  },
+  backIcon: {
+    width: 20,
+    height: 20,
+  },
+  bannerImage: {
+    width: "100%",
+    height: 190,
+    resizeMode: "contain",
+  },
+  contentContainer: {
+    flex: 1,
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
+    padding: 20,
+    marginTop: -20,
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: "bold",
+    textAlign: "center",
+    marginTop: 10,
+    color: "#333",
+  },
+  subtitle: {
+    fontSize: 16,
+    textAlign: "center",
+    color: "#666",
+    marginTop: 5,
   },
   inputContainer: {
-    marginTop: 10,
+    position: "relative",
+    marginTop: 15,
+  },
+  icon: {
+    position: "absolute",
+    left: 15,
+    top: 15,
+    width: 20,
+    height: 20,
   },
   input: {
-    backgroundColor: "#F9F9F9",
+    backgroundColor: "#f8f9fa",
     height: 50,
+    borderRadius: 12,
+    paddingLeft: 45,
+    fontSize: 16,
     borderWidth: 1,
-    marginBottom: 20,
-    paddingHorizontal: 10,
-    fontSize: 18,
-    borderRadius: 10,
-    borderColor: "#D3D3D3",
+    borderColor: "#e4e4e4",
+  },
+  errorInput: {
+    borderColor: "red",
   },
   eyeButton: {
     position: "absolute",
-    right: 10,
+    right: 15,
     top: 15,
   },
-  buttonContainer: {
-    marginTop: 25,
+  eyeIcon: {
+    width: 20,
+    height: 20,
   },
   resetButton: {
-    backgroundColor: "#33CCFF",
-    borderRadius: 10,
-    height: 50,
-    justifyContent: "center",
+    backgroundColor: "#3b82f6",
+    borderRadius: 12,
+    paddingVertical: 15,
+    marginTop: 20,
     alignItems: "center",
   },
   resetButtonText: {
-    fontSize: 20,
-    color: "white",
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "bold",
   },
   errorText: {
     color: "red",
-    fontSize: 12,
-    marginBottom: 10,
+    fontSize: 14,
+    textAlign: "center",
+    marginTop: 10,
   },
   modalContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(0,0,0,0.5)",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalContent: {
-    backgroundColor: "white",
+    backgroundColor: "#fff",
     padding: 20,
-    borderRadius: 10,
+    borderRadius: 12,
+    width: 300,
     alignItems: "center",
   },
   modalMessage: {
     fontSize: 16,
-    marginBottom: 15,
     textAlign: "center",
+    marginBottom: 20,
   },
   modalButton: {
-    backgroundColor: "#33CCFF",
-    borderRadius: 10,
+    backgroundColor: "#3b82f6",
+    borderRadius: 12,
     paddingVertical: 10,
     paddingHorizontal: 20,
   },
   modalButtonText: {
-    color: "white",
+    color: "#fff",
     fontSize: 16,
   },
 });

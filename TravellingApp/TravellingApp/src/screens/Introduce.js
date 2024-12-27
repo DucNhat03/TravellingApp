@@ -31,7 +31,7 @@ const IntroduceScreen = ({ navigation }) => {
 
   return (
     <LinearGradient
-      colors={["#FF7E5F", "#FEB47B"]} // Nền gradient 
+      colors={["#243949", "#517fa4"]} // Nền gradient
       style={styles.container}
     >
       {loading ? (
@@ -114,6 +114,5 @@ const styles = StyleSheet.create({
     textShadowRadius: 5,
   },
 });
-
 
 export default IntroduceScreen;
